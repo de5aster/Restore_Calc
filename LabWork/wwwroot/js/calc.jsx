@@ -299,6 +299,7 @@ class Restore extends React.Component {
             cashboxCloseDoc: 0,
             month: "",
             documents: 0,
+			lastMonthDocument: 0,
             restorePrice: 0,
 			currentPrice: 0,
             visible: false,
@@ -314,11 +315,31 @@ class Restore extends React.Component {
 			lastMonthVisible: false,
 			providersVisible: true,
 			customersVisible: false
-    };
+		};
     }
+	
+	componentWillReceiveProps (nextProps){
+		if(this.props.statementInfo !== nextProps.statementInfo)
+		{
+			let restoreDocs = this.calculateInitRestoreDocs(nextProps.statementInfo);
+			let lastMonthDocs = this.calculateInitLastMonthDocs(nextProps.statementInfo);
+			console.log("r = " + restoreDocs + "lM = " + lastMonthDocs);
+			
+			setTimeout(this.setState ({
+								region: "",
+								taxactionSystem: "",
+								marker: false,
+								visible: false,
+								employers: 0,
+								documents: restoreDocs,
+								lastMonthDocument : lastMonthDocs
+							}), 100);
+		}
+	}
+	
     onRegionChange = (e) => {
         this.setState({
-            region: e.target.value.slice(0, 2),
+            region: e.target.value,
             marker: true
         });
         setTimeout(this.reCalculate, 50);
@@ -430,63 +451,82 @@ class Restore extends React.Component {
     }
 
     onRestorePriceRequest = () => {
-        this.restoreDocumentCalculate();
-        setTimeout(this.restoreRequest, 50);
+		setTimeout(this.restoreRequest, 50);
     }
 	
 	onCurrentPriceRequest = () => {
-        this.lastMonthDocumentCalculate();
-        setTimeout(this.currentRequest, 50);
+		setTimeout(this.currentRequest, 50);
     }
 
+	validParams = () => {
+		return (this.state.taxactionSystem !== "" 
+		&& this.state.region!== ""
+		&& this.state.validEmployers
+		&& this.state.validMonth)
+	}
     restoreRequest = () => {
-        var xhr = new XMLHttpRequest();
-        xhr.open("post", this.props.urlApiRestore, true);
-        xhr.setRequestHeader("Content-type", "application/json");
-        xhr.send(JSON.stringify({
-            "Region": this.state.region,
-            "TaxactionSystem": this.state.taxactionSystem,
-            "Document": this.state.documents
-        }));
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {                   
-                    var price = JSON.parse(xhr.responseText);
-                    this.setState({
-                        restorePrice: price,
-                        visible: true
-                    });
-                }
-                if (xhr.status === 400) {
-                    alert("Произошла ошибка, повторите попытку.");
-                }
-            }
-        };
+		if(this.validParams())
+		{
+			var xhr = new XMLHttpRequest();
+			xhr.open("post", this.props.urlApiRestore, true);
+			xhr.setRequestHeader("Content-type", "application/json");
+			xhr.send(JSON.stringify({
+				"Region": this.state.region.slice(0,2),
+				"TaxactionSystem": this.state.taxactionSystem,
+				"Document": this.state.documents
+			}));
+			xhr.onreadystatechange = () => {
+				if (xhr.readyState === 4) {
+					if (xhr.status === 200) {                   
+						var price = JSON.parse(xhr.responseText);
+						this.setState({
+							restorePrice: price,
+							visible: true
+						});
+					}
+					if (xhr.status === 400) {
+						alert("Произошла ошибка, повторите попытку.");
+					}
+				}
+			};
+		}
     }
     currentRequest = () => {
-        var xhr = new XMLHttpRequest();
-        xhr.open("post", this.props.urlCurrentPrice, true);
-        xhr.setRequestHeader("Content-type", "application/json");
-        xhr.send(JSON.stringify({
-            "Region": this.state.region,
-            "TaxactionSystem": this.state.taxactionSystem,
-            "Document": this.state.lastMonthDocument
-        }));
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {                   
-                    var price = JSON.parse(xhr.responseText);
-                    this.setState({
-                        currentPrice: price,
-                        visible: true
-                    });
-                }
-                if (xhr.status === 400) {
-                    alert("Произошла ошибка, повторите попытку.");
-                }
-            }
-        };
+		if(this.validParams())
+		{
+			var xhr = new XMLHttpRequest();
+			xhr.open("post", this.props.urlCurrentPrice, true);
+			xhr.setRequestHeader("Content-type", "application/json");
+			xhr.send(JSON.stringify({
+				"Region": this.state.region.slice(0,2),
+				"TaxactionSystem": this.state.taxactionSystem,
+				"Document": this.state.lastMonthDocument
+			}));
+			xhr.onreadystatechange = () => {
+				if (xhr.readyState === 4) {
+					if (xhr.status === 200) {                   
+						var price = JSON.parse(xhr.responseText);
+						this.setState({
+							currentPrice: price,
+							visible: true
+						});
+					}
+					if (xhr.status === 400) {
+						alert("Произошла ошибка, повторите попытку.");
+					}
+				}
+			};
+		}
     }	
+	
+	calculateInitRestoreDocs = (nextProps) => {         
+        return ( nextProps.restoreDocuments.buyCount + nextProps.restoreDocuments.sellCount) * 2
+            + nextProps.restoreDocuments.equaringCount
+            + nextProps.restoreDocuments.bankComissionCount * 0.25
+            + nextProps.restoreDocuments.taxCount
+            + nextProps.restoreDocuments.incomingBankOrder * 2
+            + nextProps.restoreDocuments.outgoingBankOrder * 2;
+    }
     
     calculateRestoreDocs = () => { 
         
@@ -501,6 +541,15 @@ class Restore extends React.Component {
             + this.props.statementInfo.restoreDocuments.outgoingBankOrder;
     }
 	
+	calculateInitLastMonthDocs = (nextProps) => { 	
+		return ( nextProps.lastMonthDocuments.buyCount + nextProps.lastMonthDocuments.sellCount) * 2
+			+ nextProps.lastMonthDocuments.equaringCount
+			+ nextProps.lastMonthDocuments.bankComissionCount * 0.25
+			+ nextProps.lastMonthDocuments.taxCount
+			+ nextProps.lastMonthDocuments.incomingBankOrder * 2
+			+ nextProps.lastMonthDocuments.outgoingBankOrder * 2;
+	}
+	
 	calculateLastMonthDocs = () => { 	
 		return this.state.kkm * 30
 			+ this.state.kkm
@@ -512,6 +561,7 @@ class Restore extends React.Component {
 			+ this.props.statementInfo.lastMonthDocuments.incomingBankOrder
 			+ this.props.statementInfo.lastMonthDocuments.outgoingBankOrder;
 	}
+	
     restoreDocumentCalculate = (value) => {
         
 		if (value !== null)
@@ -519,7 +569,9 @@ class Restore extends React.Component {
 			this.setState({
 				documents: value
 			});
-		}		
+		}
+		
+		setTimeout(this.onRestorePriceRequest, 50);
     }
 	
 	lastMonthDocumentCalculate = (value) => {	
@@ -528,8 +580,11 @@ class Restore extends React.Component {
 			this.setState({
 				lastMonthDocument: value
 			});
-		}		
+		}
+		
+		setTimeout(this.onCurrentPriceRequest, 50);
 	}
+	
     isValid = () => {
         if (this.state.region !== "")
         {
@@ -616,7 +671,7 @@ class Restore extends React.Component {
                                         <label> ИНН-КПП </label>
                                         <span className="text-calc">{requisites}</span> <br />
                                         <label> Регион </label>
-                                        <input className="input-calc" name="region" list="regions" placeholder="Введите код региона или название" onChange={this.onRegionChange} />
+                                        <input className="input-calc" name="region" list="regions" placeholder="Введите код региона или название" onChange={this.onRegionChange} value = {this.state.region}/>
                                         <datalist id="regions">
                                             { 
 												this.props.regions.map((item, index) => {												
@@ -626,7 +681,7 @@ class Restore extends React.Component {
                                         </datalist>
                                         <br />
                                         <label> СНО </label>
-                                        <select name="taxactionSystem" onChange={this.onTaxactionSystemChange}>
+                                        <select name="taxactionSystem" onChange={this.onTaxactionSystemChange} value = {this.state.taxactionSystem}>
                                             <option value="osno">ОСНО</option>
                                             <option value="usnd">УСН доходы</option>
                                             <option value="usndr">УСН д-р или УСН+ЕНВД</option>
@@ -636,9 +691,9 @@ class Restore extends React.Component {
                                         <br />                                   
                                         <div className="kkm">    
                                             <label> Наличие ККМ </label>
-                                            <select id="half" name="kkm" onChange={this.onKkmChange}>
+                                            <select id="half" name="kkm" onChange={this.onKkmChange} value={this.state.cashbox}>
                                                 <option value={true}>Да</option>
-                                                <option selected value="">Нет</option>
+                                                <option value="">Нет</option>
                                             </select>
                                             <span className={"month" + (this.state.monthVisible ? '_none' : '') }>
                                                 <label id="half-label">месяцев: </label>
@@ -656,7 +711,7 @@ class Restore extends React.Component {
                                         </select>
                                         <br />
                                         <label> Сотрудники </label>
-                                        <input className={"input-calc"+(this.state.validEmployers?'':'-error')} type="number" onChange={this.onEmployersChange} onMouseOver={this.restoreDocumentCalculate} value={this.state.employers} placeholder="Введите значение"></input>
+                                        <input className={"input-calc"+(this.state.validEmployers?'':'-error')} type="number" onChange={this.onEmployersChange} value={this.state.employers} placeholder="Введите значение"></input>
                                         <p id="errorMessage">{this.state.validEmployersMessage}</p>
                                     </form>
                                 </div>
@@ -793,6 +848,9 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
             }
         });
+		
+			setTimeout(() => {this.calculateCloseDocument()}, 100);
+			setTimeout(() => {this.calculateAllDocument()}, 100);
     }
     onBankComissionChange = (e) => {
         let value = parseInt(e.target.value, 10);
@@ -807,6 +865,9 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
             }
         });
+		
+		setTimeout(() => {this.calculateCloseDocument()}, 100);
+		setTimeout(() => {this.calculateAllDocument()}, 100);
     }
 
     onBuyChange = (e) => {
@@ -822,6 +883,9 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
             }
         });
+		
+		setTimeout(() => {this.calculateCloseDocument()}, 100);
+		setTimeout(() => {this.calculateAllDocument()}, 100);
     }
     onSellChange = (e) => {
         let value = parseInt(e.target.value, 10);
@@ -836,6 +900,8 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
             }
         });
+		setTimeout(() => {this.calculateCloseDocument()}, 100);
+		setTimeout(() => {this.calculateAllDocument()}, 100);		
     }
 	
 	onTaxChange = (e) => {
@@ -851,6 +917,9 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
             }
         });
+		
+		setTimeout(() => {this.calculateCloseDocument()}, 100);
+		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
 	onIncomingBankOrderChange = (e) => {
@@ -866,6 +935,9 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
             }
         });
+		
+		setTimeout(() => {this.calculateCloseDocument()}, 100);
+		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
 	onOutgoingBankOrderChange = (e) => {
@@ -881,6 +953,9 @@ class Documents extends React.Component {
 				outgoingBankOrder: value
             }
         });
+		
+		setTimeout(() => {this.calculateCloseDocument()}, 100);
+		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
 	onBuyCoefficientChange = (e) => {
@@ -896,6 +971,8 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
 			}
         });
+		
+		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
 	onSellCoefficientChange = (e) => {
@@ -911,6 +988,8 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
 			}
         });
+		
+		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
 	onEquaringCoefficientChange = (e) => {
@@ -926,6 +1005,8 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
 			}
         });
+		
+		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
 	onTaxCoefficientChange = (e) => {
@@ -941,6 +1022,8 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
 			}
         });
+		
+		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
 	onIncomingBankOrderCoefficientChange = (e) => {
@@ -956,6 +1039,8 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
 			}
         });
+		
+		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
 	onOutgoingBankOrderCoefficientChange = (e) => {
@@ -971,6 +1056,8 @@ class Documents extends React.Component {
 				outgoingBankOrder:value
 			}
         });
+		
+		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 
     calculateCloseDocument = () => {
@@ -1017,17 +1104,20 @@ class Documents extends React.Component {
 			setTimeout(
 				this.setState({
 					summaryAllDocuments: res
-				}), 50);
+				}), 50);		
+
     }
+	
+	
 	
 	ConvertToString = (e) => {
 		return ""+ e;
 	}
 	
-	onUpdateDocuments = (value) => {
-        if ( value !== null )
+	onUpdateDocuments = () => {
+        if ( this.state.summaryAllDocuments !== null )
         {
-           setTimeout(this.props.updateDocuments(value, 50));
+           setTimeout(this.props.updateDocuments(this.state.summaryAllDocuments, 50));
         }
 	}
 	
@@ -1059,50 +1149,50 @@ class Documents extends React.Component {
                                 <tr>
                                     <td className="row-name">Покупки</td>
                                     <td>{this.state.documents.buyCount}</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.buyCount} onChange={this.onBuyChange} onBlur = {this.calculateCloseDocument}></input></td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.buy} onChange= {this.onBuyCoefficientChange} onBlur ={this.calculateAllDocument}/></td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.buyCount} onChange={this.onBuyChange} onBlur = {this.onUpdateDocuments}></input></td>
+									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.buy} onChange= {this.onBuyCoefficientChange} onBlur ={this.onUpdateDocuments}/></td>
                                     <td>{this.state.documents.buyCount + this.state.closedDocuments.buyCount * this.state.coefficients.buy}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Продажи</td>
                                     <td>{this.state.documents.sellCount}</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.sellCount} onChange={this.onSellChange}></input></td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.sell} onChange={this.onSellCoefficientChange} /></td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.sellCount} onChange={this.onSellChange} onBlur = {this.onUpdateDocuments}></input></td>
+									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.sell} onChange={this.onSellCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
                                     <td>{this.state.documents.sellCount + this.state.closedDocuments.sellCount * this.state.coefficients.sell}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Эквайринг</td>
                                     <td>{this.state.documents.equaringCount}</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.equaringCount} onChange={this.onEquaringChange} /></td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.equaring} onChange={this.onEquaringCoefficientChange} /></td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.equaringCount} onChange={this.onEquaringChange} onBlur = {this.onUpdateDocuments}/></td>
+									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.equaring} onChange={this.onEquaringCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
                                     <td>{this.state.documents.equaringCount}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Комиссия банка</td>
                                     <td>{this.state.documents.bankComissionCount}</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.bankComissionCount} onChange={this.onBankComissionChange}></input></td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.bankComission} onChange={this.onBankComissionCoefficientChange} /></td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.bankComissionCount} onChange={this.onBankComissionChange} onBlur = {this.onUpdateDocuments}></input></td>
+									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.bankComission} onChange={this.onBankComissionCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
                                     <td>{(this.state.documents.bankComissionCount + this.state.closedDocuments.bankComissionCount) * this.state.coefficients.bankComission}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Налоговые платежи</p></td>
                                     <td>{this.state.documents.taxCount}</td>
-									<td><input className="input-table" type="number" value={this.state.closedDocuments.taxCount} onChange={this.onTaxChange}></input></td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.tax} onChange={this.onTaxCoefficientChange} /></td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.taxCount} onChange={this.onTaxChange} onBlur = {this.onUpdateDocuments}></input></td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.tax} onChange={this.onTaxCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
                                     <td>{this.state.documents.taxCount + this.state.closedDocuments.taxCount * this.state.coefficients.tax}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Входящий <br/>банк.ордер</p></td>
                                     <td>{this.state.documents.incomingBankOrder}</td>
-									<td><input className="input-table" type="number" value={this.state.closedDocuments.incomingBankOrder} onChange={this.onIncomingBankOrderChange}></input></td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.incomingBankOrder} onChange={this.onIncomingBankOrderCoefficientChange} /></td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.incomingBankOrder} onChange={this.onIncomingBankOrderChange} onBlur = {this.onUpdateDocuments}></input></td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.incomingBankOrder} onChange={this.onIncomingBankOrderCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
                                     <td>{this.state.documents.incomingBankOrder + this.state.closedDocuments.incomingBankOrder * this.state.coefficients.incomingBankOrder}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Исходящий <br />банк.ордер</p></td>
                                     <td>{this.state.documents.outgoingBankOrder}</td>
-									<td><input className="input-table" type="number" value={this.state.closedDocuments.outgoingBankOrder} onChange={this.onOutgoingBankOrderChange}></input></td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.outgoingBankOrder} onChange={this.onOutgoingBankOrderCoefficientChange} /></td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.outgoingBankOrder} onChange={this.onOutgoingBankOrderChange} onBlur = {this.onUpdateDocuments}></input></td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.outgoingBankOrder} onChange={this.onOutgoingBankOrderCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
                                     <td>{this.state.documents.outgoingBankOrder + this.state.closedDocuments.outgoingBankOrder * this.state.coefficients.outgoingBankOrder}</td>
                                 </tr>
 								<tr>
