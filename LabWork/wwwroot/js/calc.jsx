@@ -323,7 +323,6 @@ class Restore extends React.Component {
 		{
 			let restoreDocs = this.calculateInitRestoreDocs(nextProps.statementInfo);
 			let lastMonthDocs = this.calculateInitLastMonthDocs(nextProps.statementInfo);
-			console.log("r = " + restoreDocs + "lM = " + lastMonthDocs);
 			
 			setTimeout(this.setState ({
 								region: "",
@@ -331,6 +330,10 @@ class Restore extends React.Component {
 								marker: false,
 								visible: false,
 								employers: 0,
+								kkm: 0,
+								cashbox: 0,
+								cashboxDoc: 0,
+								monthVisible: false,
 								documents: restoreDocs,
 								lastMonthDocument : lastMonthDocs
 							}), 100);
@@ -354,8 +357,8 @@ class Restore extends React.Component {
     }
 
     onKkmChange = (e) => {  
-        let kkm = Boolean(e.target.value);
-        if (kkm) {
+        let kkm = e.target.value;
+        if ( kkm == 1 ) {
             this.setState({
                 cashbox: 30 * this.props.statementInfo.datesInStatement.period.monthCount,
                 cashboxCloseDoc: this.props.statementInfo.datesInStatement.period.monthCount,
@@ -372,6 +375,7 @@ class Restore extends React.Component {
 				kkm: 0
             });
         }
+		
         setTimeout(this.reCalculate, 50);
     }
     onDirectorChange = (e) => {
@@ -686,14 +690,15 @@ class Restore extends React.Component {
                                             <option value="usnd">УСН доходы</option>
                                             <option value="usndr">УСН д-р или УСН+ЕНВД</option>
                                             <option value="envd">ЕНВД</option>
-                                            <option selected className="option_display">Выберите СНО</option>
+											<option className="option_display" value="">Выберите СНО</option>
                                         </select>
                                         <br />                                   
                                         <div className="kkm">    
                                             <label> Наличие ККМ </label>
-                                            <select id="half" name="kkm" onChange={this.onKkmChange} value={this.state.cashbox}>
-                                                <option value={true}>Да</option>
-                                                <option value="">Нет</option>
+                                            <select id="half" name="kkm" onChange={this.onKkmChange} value ={this.state.kkm}>
+                                                <option value={1}>Да</option>
+                                                <option value={0}>Нет</option>
+												<option className="option_display" value="">lalala</option>
                                             </select>
                                             <span className={"month" + (this.state.monthVisible ? '_none' : '') }>
                                                 <label id="half-label">месяцев: </label>
