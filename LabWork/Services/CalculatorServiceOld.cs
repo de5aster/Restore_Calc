@@ -102,7 +102,7 @@ namespace RestoreCalculator.Services
                 return "11_30";
             if (ops > 3)
                 return "4_10";
-            return "restore_0_3";
+            return "0_3";
         }
 
         private static int GetTaxactionSystem(string taxactionSystem)
