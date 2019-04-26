@@ -200,7 +200,7 @@ class ContentCalc extends React.Component {
                     });
                 }
                 if (xhr.status === 400) {
-                    alert("Произошла ошибка, повторите попытку.");
+                    this.setErrorMessage(xhr.responseText);
                 }
             }
         };
@@ -297,7 +297,7 @@ class Restore extends React.Component {
             cashbox: 0,
             cashboxDoc: 0,
             cashboxCloseDoc: 0,
-            month: "",
+            month: 0,
             documents: 0,
 			lastMonthDocument: 0,
             restorePrice: 0,
@@ -323,7 +323,7 @@ class Restore extends React.Component {
 		{
 			let restoreDocs = this.calculateInitRestoreDocs(nextProps.statementInfo);
 			let lastMonthDocs = this.calculateInitLastMonthDocs(nextProps.statementInfo);
-			
+			let newMonth = nextProps.statementInfo.datesInStatement.period.monthCount;
 			setTimeout(this.setState ({
 								region: "",
 								taxactionSystem: "",
@@ -335,7 +335,8 @@ class Restore extends React.Component {
 								cashboxDoc: 0,
 								monthVisible: false,
 								documents: restoreDocs,
-								lastMonthDocument : lastMonthDocs
+								lastMonthDocument : lastMonthDocs,
+								month: newMonth
 							}), 100);
 		}
 	}
@@ -359,25 +360,22 @@ class Restore extends React.Component {
     onKkmChange = (e) => {  
         let kkm = e.target.value;
         if ( kkm == 1 ) {
-            this.setState({
-                cashbox: 30 * this.props.statementInfo.datesInStatement.period.monthCount,
-                cashboxCloseDoc: this.props.statementInfo.datesInStatement.period.monthCount,
+            this.setState({                
                 monthVisible: true,
                 marker: true,
 				kkm: 1
             });
         } else {
-            this.setState({
-                cashbox: 0,
-                cashboxCloseDoc: 0,
+            this.setState({                
                 monthVisible: false,
                 marker: true,
 				kkm: 0
             });
         }
 		
-        setTimeout(this.reCalculate, 50);
+        setTimeout(this.reCalculate, 100);
     }
+	
     onDirectorChange = (e) => {
         
         let dir = Boolean(e.target.value);
@@ -416,11 +414,10 @@ class Restore extends React.Component {
         }
     }
     onChangeMonth = (e) => {
-        var month = e.target.value;
-        var length = month.length;
+        var newMonth = e.target.value;
+        var length = newMonth.length;
         this.setState({
-            cashboxCloseDoc: parseInt(month),
-            cashbox: 30 * parseInt(month),
+            month: parseInt(newMonth),
             marker:true
         });
         if (length === 0) {
@@ -468,6 +465,7 @@ class Restore extends React.Component {
 		&& this.state.validEmployers
 		&& this.state.validMonth)
 	}
+	
     restoreRequest = () => {
 		if(this.validParams())
 		{
@@ -489,12 +487,13 @@ class Restore extends React.Component {
 						});
 					}
 					if (xhr.status === 400) {
-						alert("Произошла ошибка, повторите попытку.");
+							alert("Произошла ошибка, повторите попытку.");
 					}
 				}
 			};
 		}
     }
+	
     currentRequest = () => {
 		if(this.validParams())
 		{
@@ -531,19 +530,6 @@ class Restore extends React.Component {
             + nextProps.restoreDocuments.incomingBankOrder * 2
             + nextProps.restoreDocuments.outgoingBankOrder * 2;
     }
-    
-    calculateRestoreDocs = () => { 
-        
-        return this.state.cashbox
-            + this.state.cashboxCloseDoc
-            + ( this.props.statementInfo.restoreDocuments.buyCount + this.props.statementInfo.restoreDocuments.sellCount) * this.state.documentCoeficient
-            + this.state.employers * 3 * this.props.statementInfo.datesInStatement.period.monthCount
-            + this.props.statementInfo.restoreDocuments.equaringCount
-            + this.props.statementInfo.restoreDocuments.bankComissionCount * 0.25
-            + this.props.statementInfo.restoreDocuments.taxCount
-            + this.props.statementInfo.restoreDocuments.incomingBankOrder
-            + this.props.statementInfo.restoreDocuments.outgoingBankOrder;
-    }
 	
 	calculateInitLastMonthDocs = (nextProps) => { 	
 		return ( nextProps.lastMonthDocuments.buyCount + nextProps.lastMonthDocuments.sellCount) * 2
@@ -553,19 +539,7 @@ class Restore extends React.Component {
 			+ nextProps.lastMonthDocuments.incomingBankOrder * 2
 			+ nextProps.lastMonthDocuments.outgoingBankOrder * 2;
 	}
-	
-	calculateLastMonthDocs = () => { 	
-		return this.state.kkm * 30
-			+ this.state.kkm
-			+ ( this.props.statementInfo.lastMonthDocuments.buyCount + this.props.statementInfo.lastMonthDocuments.sellCount) * this.state.documentCoeficient
-			+ this.state.employers * 3
-			+ this.props.statementInfo.lastMonthDocuments.equaringCount
-			+ this.props.statementInfo.lastMonthDocuments.bankComissionCount * 0.25
-			+ this.props.statementInfo.lastMonthDocuments.taxCount
-			+ this.props.statementInfo.lastMonthDocuments.incomingBankOrder
-			+ this.props.statementInfo.lastMonthDocuments.outgoingBankOrder;
-	}
-	
+
     restoreDocumentCalculate = (value) => {
         
 		if (value !== null)
@@ -702,7 +676,7 @@ class Restore extends React.Component {
                                             </select>
                                             <span className={"month" + (this.state.monthVisible ? '_none' : '') }>
                                                 <label id="half-label">месяцев: </label>
-                                                <input className={"input-calc-half"+(this.state.validMonth?"":"-error")} type="number" value={this.state.cashboxCloseDoc} onChange={this.onChangeMonth}/>
+                                                <input className={"input-calc-half"+(this.state.validMonth?"":"-error")} type="number" value={this.state.month} onChange={this.onChangeMonth}/>
                                             </span>
                                            
                                         </div>
@@ -771,21 +745,21 @@ class Restore extends React.Component {
 							</NavItem>
 						</Nav>
 						<Documents
-							dates = {this.props.statementInfo.datesInStatement}							
+							dates = {this.props.statementInfo.datesInStatement}
+							month = {this.state.month}
 							documents = {this.props.statementInfo.restoreDocuments}
 							visible={this.state.restoreVisible}
 							documentCoeficient={this.state.documentCoeficient}
-							cashbox={this.state.cashbox}
-							cashboxCloseDoc={this.state.cashboxCloseDoc}
+							kkm = {this.state.kkm}
 							updateDocuments = {this.restoreDocumentCalculate}
 						/>	
 						<Documents
 							dates = {this.props.statementInfo.datesInStatement}
+							month = {1}
 							documents = {this.props.statementInfo.lastMonthDocuments}
 							visible={this.state.lastMonthVisible}
-							documentCoeficient={this.state.documentCoeficient}
-							cashbox={this.state.cashbox}
-							cashboxCloseDoc={this.state.cashboxCloseDoc}
+							documentCoeficient={this.state.documentCoeficient}							
+							kkm = {this.state.kkm}
 							updateDocuments = {this.lastMonthDocumentCalculate}
 						/>
 					</div>						
@@ -812,15 +786,17 @@ class Documents extends React.Component {
 			},
 			summaryBankDocuments: 0,
 			summaryClosedDocuments: 0,
-			summaryAllDocuments: 0
+			summaryAllDocuments: 0,
+			kkm : 0,
+			month : 0,
+			cashbox: 0,
+			cashboxCloseDoc:0
 			
         };
     }
 	
-
-	
 	componentDidUpdate() {
-		if (this.props.documents !== this.state.documents) {
+		if (this.props.documents !== this.state.documents){
 			this.setState({
 				documents : this.props.documents,
 				closedDocuments: {
@@ -833,11 +809,45 @@ class Documents extends React.Component {
 					outgoingBankOrder: this.props.documents.outgoingBankOrder
 				}
 			});
+		
+		if (this.props.kkm !== this.state.kkm)
+		{
+			this.setState ({
+				month: this.props.month,
+				kkm: this.props.kkm,
+				cashbox: this.props.kkm * 30 * this.props.month,
+				cashboxCloseDoc : this.props.month * this.props.kkm
+			});
+		} 
 			
 			setTimeout(() => {this.calculateBankDocument()}, 100);
 			setTimeout(() => {this.calculateCloseDocument()}, 100);
 			setTimeout(() => {this.calculateAllDocument()}, 100);
 		}
+	}
+	
+	componentWillReceiveProps (nextProps){
+		if (this.state.kkm !== nextProps.kkm) 
+		{
+			this.setState ({
+				kkm: nextProps.kkm,
+				cashbox: nextProps.kkm * 30 * this.props.month,
+				cashboxCloseDoc : this.props.month * nextProps.kkm
+			});
+		}
+		
+		if (this.state.month !== nextProps.month)
+		{
+			this.setState ({
+				month: nextProps.month,
+				cashbox: this.props.kkm * 30 * nextProps.month,
+				cashboxCloseDoc : nextProps.month * this.props.kkm
+			})
+		}
+		
+		setTimeout(() => {this.calculateBankDocument()}, 100);
+		setTimeout(() => {this.calculateCloseDocument()}, 100);
+		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 
     onEquaringChange = (e) => {
@@ -963,6 +973,28 @@ class Documents extends React.Component {
 		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
+	onCashboxChange = (e) => 
+	{
+		let value = parseInt(e.target.value, 10);
+		this.setState({
+			cashbox: value
+		});
+		
+		setTimeout(() => {this.calculateBankDocument()}, 100);
+		setTimeout(() => {this.calculateAllDocument()}, 100);
+	}
+	
+	onCashboxCloseDocsChange = (e) => 
+	{
+		let value = parseInt(e.target.value, 10);
+		this.setState({
+			cashboxCloseDoc: value
+		});
+		
+		setTimeout(() => {this.calculateCloseDocument()}, 100);
+		setTimeout(() => {this.calculateAllDocument()}, 100);
+	}
+	
 	onBuyCoefficientChange = (e) => {
 		let value = e.target.value;
 		this.setState({
@@ -1005,6 +1037,23 @@ class Documents extends React.Component {
 				sell: this.state.coefficients.sell,
 				equaring: value,
 				bankComission: this.state.coefficients.bankComission,
+				tax: this.state.coefficients.tax,
+				incomingBankOrder: this.state.coefficients.incomingBankOrder,
+				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
+			}
+        });
+		
+		setTimeout(() => {this.calculateAllDocument()}, 100);
+	}
+	
+		onBankComissionCoefficientChange = (e) => {
+		let value = e.target.value;
+		this.setState({
+            coefficients: {
+				buy: this.state.coefficients.buy,
+				sell: this.state.coefficients.sell,
+				equaring: this.state.coefficients.equaring,
+				bankComission: value,
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
@@ -1071,7 +1120,7 @@ class Documents extends React.Component {
             + this.state.closedDocuments.equaringCount
             + this.state.closedDocuments.bankComissionCount
             + this.state.closedDocuments.taxCount			
-            + this.props.cashboxCloseDoc
+            + this.state.cashboxCloseDoc
             + this.state.closedDocuments.incomingBankOrder
             + this.state.closedDocuments.outgoingBankOrder;	
 			
@@ -1087,7 +1136,7 @@ class Documents extends React.Component {
             + this.state.documents.equaringCount
             + this.state.documents.bankComissionCount
             + this.state.documents.taxCount			
-            + this.props.cashbox
+            + this.state.cashbox
             + this.state.documents.incomingBankOrder
             + this.state.documents.outgoingBankOrder;	
 			
@@ -1104,13 +1153,14 @@ class Documents extends React.Component {
 			+ (( this.state.documents.bankComissionCount + this.state.closedDocuments.bankComissionCount) * this.state.coefficients.bankComission)
 			+ ( this.state.documents.taxCount + this.state.closedDocuments.taxCount * this.state.coefficients.tax)
 			+ ( this.state.documents.incomingBankOrder + this.state.closedDocuments.incomingBankOrder * this.state.coefficients.incomingBankOrder)
-			+ ( this.state.documents.outgoingBankOrder + this.state.closedDocuments.outgoingBankOrder * this.state.coefficients.outgoingBankOrder);
+			+ ( this.state.documents.outgoingBankOrder + this.state.closedDocuments.outgoingBankOrder * this.state.coefficients.outgoingBankOrder)
+			+ this.state.cashbox 
+			+ this.state.cashboxCloseDoc;
 			
 			setTimeout(
 				this.setState({
 					summaryAllDocuments: res
-				}), 50);		
-
+				}), 50);
     }
 	
 	
@@ -1121,8 +1171,8 @@ class Documents extends React.Component {
 	
 	onUpdateDocuments = () => {
         if ( this.state.summaryAllDocuments !== null )
-        {
-           setTimeout(this.props.updateDocuments(this.state.summaryAllDocuments, 50));
+        {		
+           setTimeout(this.props.updateDocuments(this.state.summaryAllDocuments), 50);
         }
 	}
 	
@@ -1205,10 +1255,10 @@ class Documents extends React.Component {
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Касса</p></td>
-                                    <td>{this.props.cashbox}</td>									
+									<td><input className="input-table" type="number" value={this.state.cashbox} onChange={this.onCashboxChange} onBlur = {this.onUpdateDocuments}></input></td>
+									<td><input className="input-table" type="number" value={this.state.cashboxCloseDoc} onChange={this.onCashboxCloseDocsChange} onBlur = {this.onUpdateDocuments}></input></td>								
 									<td>0</td>
-                                    <td>{this.props.cashboxCloseDoc}</td>
-                                    <td>{this.props.cashbox + this.props.cashboxCloseDoc }</td>
+                                    <td>{this.state.cashbox + this.state.cashboxCloseDoc }</td>
                                 </tr>
                                 <tr>
                                     <td colSpan="5"></td>
@@ -1241,7 +1291,7 @@ class TopFive extends React.Component {
 		<div className={"docs" + (this.props.visible ? '_none' : '')}>
 			<Panel className="document-panel">
 				<Panel.Heading>
-					<Panel.Title componentClass="h3" style={{ fontSize: "28px" }}>{this.props.name}</Panel.Title>
+					<Panel.Title componentClass="h3" style={{ fontSize: "24px" }}>{this.props.name}</Panel.Title>
 				</Panel.Heading>
 				<Panel.Body>
 					<Table striped bordered condensed hover style={{ maxWidth: "550px" }}>
