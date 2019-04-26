@@ -638,7 +638,7 @@ class Restore extends React.Component {
                     <div className="info-panel">
                         <Panel>
                             <Panel.Heading>
-                                <Panel.Title componentClass="h3" style={{fontSize:"28px"}}>Информация по организации</Panel.Title>
+                                <Panel.Title componentClass="h3" style={{fontSize:"24px"}}>Информация по организации</Panel.Title>
                             </Panel.Heading>
                             <Panel.Body> 
                                 <div className="restore">   
@@ -698,7 +698,7 @@ class Restore extends React.Component {
 						<div className="price">
 							<Panel className={"summary" + (this.state.visible ? '_none' : '')} style={{ width: '24rem' }}>
 								<Panel.Heading>
-									<Panel.Title componentClass="h3" style={{ fontSize: "28px" }}>Стоимость восстановления</Panel.Title>
+									<Panel.Title componentClass="h3" style={{ fontSize: "24px" }}>Стоимость восстановления</Panel.Title>
 								</Panel.Heading>
 								<Panel.Body>
 									<span > {parseInt(this.state.restorePrice, 10)} рублей </span>
@@ -706,7 +706,7 @@ class Restore extends React.Component {
 							</Panel>
 							<Panel className={"summary" + (this.state.visible ? '_none' : '')} style={{ width: '24rem' }}>
 								<Panel.Heading>
-									<Panel.Title componentClass="h3" style={{ fontSize: "28px" }}>Стоимость обслуживания</Panel.Title>
+									<Panel.Title componentClass="h3" style={{ fontSize: "24px" }}>Стоимость обслуживания</Panel.Title>
 								</Panel.Heading>
 								<Panel.Body>
 									<span > {parseInt(this.state.currentPrice, 10)} рублей </span>
@@ -1229,9 +1229,7 @@ class Documents extends React.Component {
                                 </tr>
                                 <tr>
                                     <td className="row-name">Итого</td>
-                                    <td></td>
-                                    <td></td>									
-									<td></td>
+                                    <td colSpan = "3"></td>
                                     <td>{this.state.summaryAllDocuments}</td>
                                 </tr>
                             </tbody>
@@ -1273,7 +1271,7 @@ class TopFive extends React.Component {
 								{
 									return (
 									<tr>							
-										<td>{item.name.slice(0,50)}</td>
+										<td style = {{textAlign: "left"}}>{item.name.slice(0,50)}</td>
 										<td>{item.inn}</td>
 										<td>{item.value}</td>
 									</tr>
