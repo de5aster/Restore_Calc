@@ -431,6 +431,7 @@ class Restore extends React.Component {
                 validMonth: true,
                 validMonthMessage: ""
             });
+			
             setTimeout(this.reCalculate, 50);
         }
     }
@@ -807,21 +808,23 @@ class Documents extends React.Component {
 					taxCount: 0,
 					incomingBankOrder: this.props.documents.incomingBankOrder,
 					outgoingBankOrder: this.props.documents.outgoingBankOrder
-				}
-			});
-		
-		if (this.props.kkm !== this.state.kkm)
-		{
-			this.setState ({
+				},
 				month: this.props.month,
 				kkm: this.props.kkm,
 				cashbox: this.props.kkm * 30 * this.props.month,
-				cashboxCloseDoc : this.props.month * this.props.kkm
+				cashboxCloseDoc : this.props.month * this.props.kkm				
 			});
-		} 
+		
+			if (this.props.kkm !== this.state.kkm)
+			{
+				this.setState ({
+					month: this.props.month,
+					kkm: this.props.kkm,
+					cashbox: this.props.kkm * 30 * this.props.month,
+					cashboxCloseDoc : this.props.month * this.props.kkm
+				});
+			}
 			
-			setTimeout(() => {this.calculateBankDocument()}, 100);
-			setTimeout(() => {this.calculateCloseDocument()}, 100);
 			setTimeout(() => {this.calculateAllDocument()}, 100);
 		}
 	}
@@ -845,8 +848,6 @@ class Documents extends React.Component {
 			})
 		}
 		
-		setTimeout(() => {this.calculateBankDocument()}, 100);
-		setTimeout(() => {this.calculateCloseDocument()}, 100);
 		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 
@@ -864,7 +865,6 @@ class Documents extends React.Component {
             }
         });
 		
-			setTimeout(() => {this.calculateCloseDocument()}, 100);
 			setTimeout(() => {this.calculateAllDocument()}, 100);
     }
     onBankComissionChange = (e) => {
@@ -881,7 +881,6 @@ class Documents extends React.Component {
             }
         });
 		
-		setTimeout(() => {this.calculateCloseDocument()}, 100);
 		setTimeout(() => {this.calculateAllDocument()}, 100);
     }
 
@@ -899,7 +898,6 @@ class Documents extends React.Component {
             }
         });
 		
-		setTimeout(() => {this.calculateCloseDocument()}, 100);
 		setTimeout(() => {this.calculateAllDocument()}, 100);
     }
     onSellChange = (e) => {
@@ -915,7 +913,7 @@ class Documents extends React.Component {
 				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
             }
         });
-		setTimeout(() => {this.calculateCloseDocument()}, 100);
+		
 		setTimeout(() => {this.calculateAllDocument()}, 100);		
     }
 	
@@ -933,7 +931,6 @@ class Documents extends React.Component {
             }
         });
 		
-		setTimeout(() => {this.calculateCloseDocument()}, 100);
 		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
@@ -951,7 +948,6 @@ class Documents extends React.Component {
             }
         });
 		
-		setTimeout(() => {this.calculateCloseDocument()}, 100);
 		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
@@ -969,7 +965,6 @@ class Documents extends React.Component {
             }
         });
 		
-		setTimeout(() => {this.calculateCloseDocument()}, 100);
 		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
@@ -980,7 +975,6 @@ class Documents extends React.Component {
 			cashbox: value
 		});
 		
-		setTimeout(() => {this.calculateBankDocument()}, 100);
 		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
@@ -991,7 +985,6 @@ class Documents extends React.Component {
 			cashboxCloseDoc: value
 		});
 		
-		setTimeout(() => {this.calculateCloseDocument()}, 100);
 		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
@@ -1113,38 +1106,6 @@ class Documents extends React.Component {
 		
 		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
-
-    calculateCloseDocument = () => {
-        let res = this.state.closedDocuments.buyCount
-            + this.state.closedDocuments.sellCount
-            + this.state.closedDocuments.equaringCount
-            + this.state.closedDocuments.bankComissionCount
-            + this.state.closedDocuments.taxCount			
-            + this.state.cashboxCloseDoc
-            + this.state.closedDocuments.incomingBankOrder
-            + this.state.closedDocuments.outgoingBankOrder;	
-			
-			setTimeout(
-				this.setState({
-					summaryClosedDocuments: res
-				}), 50);
-				
-    }
-    calculateBankDocument = () => {
-        let res = this.state.documents.buyCount
-            + this.state.documents.sellCount
-            + this.state.documents.equaringCount
-            + this.state.documents.bankComissionCount
-            + this.state.documents.taxCount			
-            + this.state.cashbox
-            + this.state.documents.incomingBankOrder
-            + this.state.documents.outgoingBankOrder;	
-			
-			setTimeout(
-				this.setState({
-					summaryBankDocuments: res
-				}), 50);
-    }
 	
     calculateAllDocument = () => {
         let res = (this.state.documents.buyCount + this.state.closedDocuments.buyCount * this.state.coefficients.buy)
@@ -1196,7 +1157,7 @@ class Documents extends React.Component {
                                     <th className="row-name">Наименование</th>
                                     <th>Кол-во операций в&nbsp;банковской выписке </th>
                                     <th>Кол-во закрывающих документов </th>									
-									<th>Коэффициент для закрывающих документов</th>
+									<th>Коэффициент</th>
                                     <th>Кол-во бухгалтерских операций в&nbsp;расчете</th>
                                 </tr>
                             </thead>
@@ -1265,8 +1226,8 @@ class Documents extends React.Component {
                                 </tr>
                                 <tr>
                                     <td className="row-name">Итого</td>
-                                    <td>{this.state.summaryBankDocuments}</td>
-                                    <td>{this.state.summaryClosedDocuments}</td>									
+                                    <td></td>
+                                    <td></td>									
 									<td></td>
                                     <td>{this.state.summaryAllDocuments}</td>
                                 </tr>
