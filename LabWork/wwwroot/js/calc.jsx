@@ -431,8 +431,6 @@ class Restore extends React.Component {
                 validMonth: true,
                 validMonthMessage: ""
             });
-			
-            setTimeout(this.reCalculate, 50);
         }
     }
     
@@ -837,6 +835,9 @@ class Documents extends React.Component {
 				cashbox: nextProps.kkm * 30 * this.props.month,
 				cashboxCloseDoc : this.props.month * nextProps.kkm
 			});
+			
+			setTimeout(() => {this.calculateAllDocument()}, 100);
+			setTimeout(() => {this.onUpdateDocuments()} ,100);
 		}
 		
 		if (this.state.month !== nextProps.month)
@@ -845,10 +846,12 @@ class Documents extends React.Component {
 				month: nextProps.month,
 				cashbox: this.props.kkm * 30 * nextProps.month,
 				cashboxCloseDoc : nextProps.month * this.props.kkm
-			})
-		}
+			});
+			
+			setTimeout(() => {this.calculateAllDocument()}, 100);
+			setTimeout(() => {this.onUpdateDocuments()} ,100);
+		}	
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 
     onEquaringChange = (e) => {
