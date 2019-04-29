@@ -247,10 +247,10 @@ class ContentCalc extends React.Component {
 
     render() {
         return (
-            <div className="content" style={{ marginTop: '5px', padding: "10px 30px" }}>
-                <h1>Расчёт операций в банковской выписке</h1>
+            <div className="content" style={{ marginTop: '5px', padding: "10px 30px" }}>                
                 <div className={"load" + (this.state.visible ? '' : '_on')}>
-                    <p>Для начала работы нужно загрузить выписку из Интернет-Банка</p>
+				<h1>Расчёт операций в банковской выписке</h1>
+                    <p>Для начала работы нужно загрузить выписку(ки) из Интернет-Банка</p>
                     <form onSubmit={this.onFileSubmit} enctype="multipart/form-data" style={{ marginBottom: "10px" }}>
                         <FormGroup>
                             <FormControl
@@ -261,7 +261,7 @@ class ContentCalc extends React.Component {
                                 onChange={this.onChangeFile}
                                 multiple
                             />
-                            <HelpBlock>Выписка в формате 1С с типом файла .*txt</HelpBlock>
+                            <HelpBlock>Выписка должна быть в формате 1С с типом файла .*txt</HelpBlock>
                         </FormGroup>
                         <Button bsStyle="primary" type="submit" disabled={!this.state.files}>Загрузить</Button>
                     </form>
@@ -321,10 +321,12 @@ class Restore extends React.Component {
 	componentWillReceiveProps (nextProps){
 		if(this.props.statementInfo !== nextProps.statementInfo)
 		{
-			let restoreDocs = this.calculateInitRestoreDocs(nextProps.statementInfo);
-			let lastMonthDocs = this.calculateInitLastMonthDocs(nextProps.statementInfo);
-			let newMonth = nextProps.statementInfo.datesInStatement.period.monthCount;
-			setTimeout(this.setState ({
+			var restoreDocs = this.calculateInitRestoreDocs(nextProps.statementInfo);
+			var lastMonthDocs = this.calculateInitLastMonthDocs(nextProps.statementInfo);
+			var newMonth = nextProps.statementInfo.datesInStatement.period.monthCount;
+			console.log("rd= " + restoreDocs);
+			console.log("lmd= " + lastMonthDocs);
+			this.setState ({
 								region: "",
 								taxactionSystem: "",
 								marker: false,
@@ -337,7 +339,7 @@ class Restore extends React.Component {
 								documents: restoreDocs,
 								lastMonthDocument : lastMonthDocs,
 								month: newMonth
-							}), 100);
+							});
 		}
 	}
 	
@@ -346,6 +348,7 @@ class Restore extends React.Component {
             region: e.target.value,
             marker: true
         });
+		
         setTimeout(this.reCalculate, 50);
     }
     onTaxactionSystemChange = (e) => {
@@ -410,7 +413,7 @@ class Restore extends React.Component {
                 validEmployers: true,
                 validEmployersMessage: ""
             });
-            setTimeout(this.reCalculate, 50);
+            setTimeout(this.reCalculate, 100);
         }
     }
     onChangeMonth = (e) => {
@@ -431,6 +434,7 @@ class Restore extends React.Component {
                 validMonth: true,
                 validMonthMessage: ""
             });
+			setTimeout(this.reCalculate, 100);
         }
     }
     
@@ -462,7 +466,9 @@ class Restore extends React.Component {
 		return (this.state.taxactionSystem !== "" 
 		&& this.state.region!== ""
 		&& this.state.validEmployers
-		&& this.state.validMonth)
+		&& this.state.validMonth
+		&& this.state.document !== null
+		&& this.state.lastMonthDocument !== null)
 	}
 	
     restoreRequest = () => {
@@ -747,6 +753,7 @@ class Restore extends React.Component {
 							dates = {this.props.statementInfo.datesInStatement}
 							month = {this.state.month}
 							documents = {this.props.statementInfo.restoreDocuments}
+							employers = {this.state.employers}
 							visible={this.state.restoreVisible}
 							documentCoeficient={this.state.documentCoeficient}
 							kkm = {this.state.kkm}
@@ -755,6 +762,7 @@ class Restore extends React.Component {
 						<Documents
 							dates = {this.props.statementInfo.datesInStatement}
 							month = {1}
+							employers = {this.state.employers}
 							documents = {this.props.statementInfo.lastMonthDocuments}
 							visible={this.state.lastMonthVisible}
 							documentCoeficient={this.state.documentCoeficient}							
@@ -781,7 +789,19 @@ class Documents extends React.Component {
 				bankComission: 0.25,
 				tax: 1,
 				incomingBankOrder: 1,
-				outgoingBankOrder:1
+				outgoingBankOrder:1,
+				employers: 3
+			},
+			accountingDocuments : {
+				buy: 0,
+				sell: 0,
+				equaring:0,
+				bankComission: 0,
+				tax: 0,
+				incomingBankOrder: 0,
+				outgoingBankOrder: 0,
+				cashbox : 0,
+				employers : 0			
 			},
 			summaryBankDocuments: 0,
 			summaryClosedDocuments: 0,
@@ -789,7 +809,10 @@ class Documents extends React.Component {
 			kkm : 0,
 			month : 0,
 			cashbox: 0,
-			cashboxCloseDoc:0
+			cashboxCloseDoc:0,
+			employers: 0,
+			employersCloseDoc: 0,
+			employersMonth: 0
 			
         };
     }
@@ -810,10 +833,13 @@ class Documents extends React.Component {
 				month: this.props.month,
 				kkm: this.props.kkm,
 				cashbox: this.props.kkm * 30 * this.props.month,
-				cashboxCloseDoc : this.props.month * this.props.kkm				
+				cashboxCloseDoc : this.props.month * this.props.kkm,
+				employers: this.props.employers,
+				employersCloseDoc: this.state.coefficients.employers * this.props.employers,
+				employersMonth: this.props.month
 			});
 		
-			if (this.props.kkm !== this.state.kkm)
+			/*if (this.props.kkm !== this.state.kkm)
 			{
 				this.setState ({
 					month: this.props.month,
@@ -823,7 +849,14 @@ class Documents extends React.Component {
 				});
 			}
 			
-			setTimeout(() => {this.calculateAllDocument()}, 100);
+			if ( this.state.employers !== this.props.employers)
+			{
+				this.setState({				
+					employers: this.props.employers
+				});
+			}*/
+			
+			setTimeout (() => {this.calculateAccountingDocuments()}, 50);
 		}
 	}
 	
@@ -836,8 +869,7 @@ class Documents extends React.Component {
 				cashboxCloseDoc : this.props.month * nextProps.kkm
 			});
 			
-			setTimeout(() => {this.calculateAllDocument()}, 100);
-			setTimeout(() => {this.onUpdateDocuments()} ,100);
+			setTimeout (() => {this.calculateAccountingDocuments()}, 50);
 		}
 		
 		if (this.state.month !== nextProps.month)
@@ -848,10 +880,19 @@ class Documents extends React.Component {
 				cashboxCloseDoc : nextProps.month * this.props.kkm
 			});
 			
-			setTimeout(() => {this.calculateAllDocument()}, 100);
-			setTimeout(() => {this.onUpdateDocuments()} ,100);
-		}	
+			setTimeout (() => {this.calculateAccountingDocuments()}, 50);
+		}
 		
+		if ( this.state.employers !== nextProps.employers)
+		{
+			this.setState({				
+				employers: nextProps.employers,
+				employersCloseDoc: this.state.coefficients.employers * nextProps.employers,
+				employersMonth: nextProps.month
+			});
+			
+			setTimeout (() => {this.calculateAccountingDocuments()}, 50);
+		}	
 	}
 
     onEquaringChange = (e) => {
@@ -868,7 +909,7 @@ class Documents extends React.Component {
             }
         });
 		
-			setTimeout(() => {this.calculateAllDocument()}, 100);
+			setTimeout(() => {this.calculateAccountingDocuments()}, 100);
     }
     onBankComissionChange = (e) => {
         let value = parseInt(e.target.value, 10);
@@ -884,7 +925,7 @@ class Documents extends React.Component {
             }
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
     }
 
     onBuyChange = (e) => {
@@ -901,7 +942,7 @@ class Documents extends React.Component {
             }
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
     }
     onSellChange = (e) => {
         let value = parseInt(e.target.value, 10);
@@ -917,7 +958,7 @@ class Documents extends React.Component {
             }
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);		
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);		
     }
 	
 	onTaxChange = (e) => {
@@ -934,7 +975,7 @@ class Documents extends React.Component {
             }
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onIncomingBankOrderChange = (e) => {
@@ -951,7 +992,7 @@ class Documents extends React.Component {
             }
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onOutgoingBankOrderChange = (e) => {
@@ -968,7 +1009,7 @@ class Documents extends React.Component {
             }
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onCashboxChange = (e) => 
@@ -978,7 +1019,7 @@ class Documents extends React.Component {
 			cashbox: value
 		});
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onCashboxCloseDocsChange = (e) => 
@@ -988,7 +1029,25 @@ class Documents extends React.Component {
 			cashboxCloseDoc: value
 		});
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+	}
+	
+	onEmployersCloseDocChange = (e) => {
+		let value = parseInt(e.target.value , 10);
+		this.setState({
+			employersCloseDoc : value
+		});
+		
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+	}
+	
+	onEmployersMonthChange = (e) => {
+		let value = parseInt(e.target.value , 10);
+		this.setState({
+			employersMonth : value
+		});
+		
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onBuyCoefficientChange = (e) => {
@@ -1001,11 +1060,12 @@ class Documents extends React.Component {
 				bankComission: this.state.coefficients.bankComission,
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
-				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
+				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				employers: this.state.employers
 			}
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onSellCoefficientChange = (e) => {
@@ -1018,11 +1078,12 @@ class Documents extends React.Component {
 				bankComission: this.state.coefficients.bankComission,
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
-				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
+				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				employers: this.state.employers
 			}
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onEquaringCoefficientChange = (e) => {
@@ -1035,11 +1096,12 @@ class Documents extends React.Component {
 				bankComission: this.state.coefficients.bankComission,
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
-				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
+				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				employers: this.state.employers
 			}
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 		onBankComissionCoefficientChange = (e) => {
@@ -1052,11 +1114,12 @@ class Documents extends React.Component {
 				bankComission: value,
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
-				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
+				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				employers: this.state.employers
 			}
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onTaxCoefficientChange = (e) => {
@@ -1069,11 +1132,12 @@ class Documents extends React.Component {
 				bankComission: this.state.coefficients.bankComission,
 				tax: value,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
-				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
+				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				employers: this.state.employers
 			}
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onIncomingBankOrderCoefficientChange = (e) => {
@@ -1086,11 +1150,12 @@ class Documents extends React.Component {
 				bankComission: this.state.coefficients.bankComission,
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: value,
-				outgoingBankOrder:this.state.coefficients.outgoingBankOrder
+				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				employers: this.state.employers
 			}
         });
 		
-		setTimeout(() => {this.calculateAllDocument()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onOutgoingBankOrderCoefficientChange = (e) => {
@@ -1103,28 +1168,50 @@ class Documents extends React.Component {
 				bankComission: this.state.coefficients.bankComission,
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
-				outgoingBankOrder:value
+				outgoingBankOrder:value,
+				employers: this.state.employers
 			}
         });
+		
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+	}
+	
+	calculateAccountingDocuments = () =>
+	{
+		this.setState ({ 
+			accountingDocuments : {
+				buy: (this.state.documents.buyCount + this.state.closedDocuments.buyCount) * this.state.coefficients.buy,
+				sell: (this.state.documents.equaringCount + this.state.closedDocuments.equaringCount) * this.state.coefficients.equaring,
+				equaring: (this.state.documents.equaringCount + this.state.closedDocuments.equaringCount) * this.state.coefficients.equaring,
+				bankComission: (this.state.documents.bankComissionCount + this.state.closedDocuments.bankComissionCount) * this.state.coefficients.bankComission,
+				tax: (this.state.documents.taxCount + this.state.closedDocuments.taxCount) * this.state.coefficients.tax,
+				incomingBankOrder: (this.state.documents.incomingBankOrder + this.state.closedDocuments.incomingBankOrder) * this.state.coefficients.incomingBankOrder,
+				outgoingBankOrder: (this.state.documents.outgoingBankOrder + this.state.closedDocuments.outgoingBankOrder) * this.state.coefficients.outgoingBankOrder,
+				cashbox: this.state.cashbox + this.state.cashboxCloseDoc,
+				employers: this.state.employersCloseDoc * this.state.employersMonth
+			}
+		});
 		
 		setTimeout(() => {this.calculateAllDocument()}, 100);
 	}
 	
     calculateAllDocument = () => {
-        let res = (this.state.documents.buyCount + this.state.closedDocuments.buyCount * this.state.coefficients.buy)
-            + (this.state.documents.sellCount + this.state.closedDocuments.sellCount * this.state.coefficients.sell)
-			+ this.state.documents.equaringCount
-			+ (( this.state.documents.bankComissionCount + this.state.closedDocuments.bankComissionCount) * this.state.coefficients.bankComission)
-			+ ( this.state.documents.taxCount + this.state.closedDocuments.taxCount * this.state.coefficients.tax)
-			+ ( this.state.documents.incomingBankOrder + this.state.closedDocuments.incomingBankOrder * this.state.coefficients.incomingBankOrder)
-			+ ( this.state.documents.outgoingBankOrder + this.state.closedDocuments.outgoingBankOrder * this.state.coefficients.outgoingBankOrder)
-			+ this.state.cashbox 
-			+ this.state.cashboxCloseDoc;
+		let docs = this.state.accountingDocuments;
+        let res = docs.buy 
+			+ docs.sell 
+			+ docs.equaring 
+			+ docs.tax 
+			+ docs.bankComission 
+			+ docs.incomingBankOrder 
+			+ docs.outgoingBankOrder 
+			+ docs.cashbox
+			+ docs.employers;
 			
 			setTimeout(
 				this.setState({
 					summaryAllDocuments: res
 				}), 50);
+		setTimeout(this.onUpdateDocuments(), 100);
     }
 	
 	
@@ -1134,7 +1221,7 @@ class Documents extends React.Component {
 	}
 	
 	onUpdateDocuments = () => {
-        if ( this.state.summaryAllDocuments !== null )
+        if ( this.state.summaryAllDocuments > 0 )
         {		
            setTimeout(this.props.updateDocuments(this.state.summaryAllDocuments), 50);
         }
@@ -1170,49 +1257,49 @@ class Documents extends React.Component {
                                     <td>{this.state.documents.buyCount}</td>
                                     <td><input className="input-table" type="number" value={this.state.closedDocuments.buyCount} onChange={this.onBuyChange} onBlur = {this.onUpdateDocuments}></input></td>
 									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.buy} onChange= {this.onBuyCoefficientChange} onBlur ={this.onUpdateDocuments}/></td>
-                                    <td>{this.state.documents.buyCount + this.state.closedDocuments.buyCount * this.state.coefficients.buy}</td>
+                                    <td>{this.state.accountingDocuments.buy}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Продажи</td>
                                     <td>{this.state.documents.sellCount}</td>
                                     <td><input className="input-table" type="number" value={this.state.closedDocuments.sellCount} onChange={this.onSellChange} onBlur = {this.onUpdateDocuments}></input></td>
 									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.sell} onChange={this.onSellCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
-                                    <td>{this.state.documents.sellCount + this.state.closedDocuments.sellCount * this.state.coefficients.sell}</td>
+                                    <td>{this.state.accountingDocuments.sell}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Эквайринг</td>
                                     <td>{this.state.documents.equaringCount}</td>
                                     <td><input className="input-table" type="number" value={this.state.closedDocuments.equaringCount} onChange={this.onEquaringChange} onBlur = {this.onUpdateDocuments}/></td>
 									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.equaring} onChange={this.onEquaringCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
-                                    <td>{this.state.documents.equaringCount}</td>
+                                    <td>{this.state.accountingDocuments.equaring}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Комиссия банка</td>
                                     <td>{this.state.documents.bankComissionCount}</td>
                                     <td><input className="input-table" type="number" value={this.state.closedDocuments.bankComissionCount} onChange={this.onBankComissionChange} onBlur = {this.onUpdateDocuments}></input></td>
 									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.bankComission} onChange={this.onBankComissionCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
-                                    <td>{(this.state.documents.bankComissionCount + this.state.closedDocuments.bankComissionCount) * this.state.coefficients.bankComission}</td>
+                                    <td>{this.state.accountingDocuments.bankComission}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Налоговые платежи</p></td>
                                     <td>{this.state.documents.taxCount}</td>
 									<td><input className="input-table" type="number" value={this.state.closedDocuments.taxCount} onChange={this.onTaxChange} onBlur = {this.onUpdateDocuments}></input></td>
                                     <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.tax} onChange={this.onTaxCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
-                                    <td>{this.state.documents.taxCount + this.state.closedDocuments.taxCount * this.state.coefficients.tax}</td>
+                                    <td>{this.state.accountingDocuments.tax}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Входящий <br/>банк.ордер</p></td>
                                     <td>{this.state.documents.incomingBankOrder}</td>
 									<td><input className="input-table" type="number" value={this.state.closedDocuments.incomingBankOrder} onChange={this.onIncomingBankOrderChange} onBlur = {this.onUpdateDocuments}></input></td>
                                     <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.incomingBankOrder} onChange={this.onIncomingBankOrderCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
-                                    <td>{this.state.documents.incomingBankOrder + this.state.closedDocuments.incomingBankOrder * this.state.coefficients.incomingBankOrder}</td>
+                                    <td>{this.state.accountingDocuments.incomingBankOrder}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Исходящий <br />банк.ордер</p></td>
                                     <td>{this.state.documents.outgoingBankOrder}</td>
 									<td><input className="input-table" type="number" value={this.state.closedDocuments.outgoingBankOrder} onChange={this.onOutgoingBankOrderChange} onBlur = {this.onUpdateDocuments}></input></td>
                                     <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.outgoingBankOrder} onChange={this.onOutgoingBankOrderCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
-                                    <td>{this.state.documents.outgoingBankOrder + this.state.closedDocuments.outgoingBankOrder * this.state.coefficients.outgoingBankOrder}</td>
+                                    <td>{this.state.accountingDocuments.outgoingBankOrder}</td>
                                 </tr>
 								<tr>
                                     <td colSpan="5"></td>
@@ -1221,10 +1308,21 @@ class Documents extends React.Component {
                                     <td className="row-name"><p>Касса</p></td>
 									<td><input className="input-table" type="number" value={this.state.cashbox} onChange={this.onCashboxChange} onBlur = {this.onUpdateDocuments}></input></td>
 									<td><input className="input-table" type="number" value={this.state.cashboxCloseDoc} onChange={this.onCashboxCloseDocsChange} onBlur = {this.onUpdateDocuments}></input></td>								
-									<td>0</td>
-                                    <td>{this.state.cashbox + this.state.cashboxCloseDoc }</td>
+									<td></td>
+                                    <td>{this.state.accountingDocuments.cashbox}</td>
                                 </tr>
                                 <tr>
+                                    <td colSpan="5"></td>
+                                </tr>
+								<tr>
+                                    <td className="row-name"><p>Сотрудники</p></td>
+									<td>{this.state.employers} сотр.</td>	
+									<td><input className="input-table" type="number" value={this.state.employersCloseDoc} onChange={this.onEmployersCloseDocChange} onBlur = {this.onUpdateDocuments}></input></td>									
+									<td><input className="input-table" type="number" value={this.state.employersMonth} onChange={this.onEmployersMonthChange} onBlur = {this.onUpdateDocuments}></input></td>
+									
+                                    <td>{this.state.accountingDocuments.employers}</td>
+                                </tr>
+								<tr>
                                     <td colSpan="5"></td>
                                 </tr>
                                 <tr>
@@ -1273,7 +1371,7 @@ class TopFive extends React.Component {
 									<tr>							
 										<td style = {{textAlign: "left"}}>{item.name.slice(0,50)}</td>
 										<td>{item.inn}</td>
-										<td>{item.value}</td>
+										<td>{item.value} руб.</td>
 									</tr>
 									)
 								}
