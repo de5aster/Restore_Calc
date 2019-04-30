@@ -16,6 +16,8 @@ var ModalBody = ReactBootstrap.Modal.Body;
 var ModalFooter = ReactBootstrap.Modal.Footer;
 var { Nav, NavItem } = ReactBootstrap;
 
+var  {ButtonToolbar, OverlayTrigger, Tooltip} = ReactBootstrap;
+
 var fileArray = [];
 var regions = [
     "01 Республика Адыгея",
@@ -292,7 +294,7 @@ class Restore extends React.Component {
             region: "",
             taxactionSystem: "",
             employers: 0,
-            documentCoeficient: 2,
+            director: 0,
 			kkm: 0,
             cashbox: 0,
             cashboxDoc: 0,
@@ -324,8 +326,6 @@ class Restore extends React.Component {
 			var restoreDocs = this.calculateInitRestoreDocs(nextProps.statementInfo);
 			var lastMonthDocs = this.calculateInitLastMonthDocs(nextProps.statementInfo);
 			var newMonth = nextProps.statementInfo.datesInStatement.period.monthCount;
-			console.log("rd= " + restoreDocs);
-			console.log("lmd= " + lastMonthDocs);
 			this.setState ({
 								region: "",
 								taxactionSystem: "",
@@ -333,6 +333,7 @@ class Restore extends React.Component {
 								visible: false,
 								employers: 0,
 								kkm: 0,
+								director: 0,
 								cashbox: 0,
 								cashboxDoc: 0,
 								monthVisible: false,
@@ -351,6 +352,7 @@ class Restore extends React.Component {
 		
         setTimeout(this.reCalculate, 50);
     }
+	
     onTaxactionSystemChange = (e) => {
         this.setState({
             taxactionSystem: e.target.value,
@@ -381,20 +383,22 @@ class Restore extends React.Component {
 	
     onDirectorChange = (e) => {
         
-        let dir = Boolean(e.target.value);
-        if (dir) {
+        let dir = e.target.value;
+        if ( dir == 1 ) {
             this.setState({
-                documentCoeficient: 1.5,
+                director: 1,
                 marker:true
             });
         } else {
             this.setState({
-                documentCoeficient: 2,
+                director: 0,
                 marker: true
             });
         } 
-        setTimeout(this.reCalculate, 50);
+		
+        setTimeout(this.reCalculate, 100);
     }
+	
     onEmployersChange = (e) => {
         var employers = e.target.value;
         var length = employers.length;
@@ -677,7 +681,7 @@ class Restore extends React.Component {
                                             <select id="half" name="kkm" onChange={this.onKkmChange} value ={this.state.kkm}>
                                                 <option value={1}>Да</option>
                                                 <option value={0}>Нет</option>
-												<option className="option_display" value="">lalala</option>
+												<option className="option_display" value="">Выберите из списка</option>
                                             </select>
                                             <span className={"month" + (this.state.monthVisible ? '_none' : '') }>
                                                 <label id="half-label">месяцев: </label>
@@ -688,12 +692,26 @@ class Restore extends React.Component {
                                         <div>
                                             <p id="errorMessage">{this.state.validMonthMessage}</p>
                                         </div>
-                                        <label>Директор сам заводит документы</label>
-                                        <select name="director" onChange={this.onDirectorChange}>
-                                            <option value={true}>Да</option>
-                                            <option selected value="">Нет</option>
-                                        </select>
-                                        <br />
+										<div className ="director">
+											<label>Директор сам заводит документы</label>
+											<select name="director" onChange={this.onDirectorChange} value={this.state.director} style = {{height:'30px'}}>
+												<option value={1}>Да</option>
+												<option value={0}>Нет</option>
+												<option className="option_display" value="">Выберите из списка</option>
+											</select>
+											<ButtonToolbar> 
+												<OverlayTrigger
+												  placement={'right'}
+												  overlay={
+													<Tooltip id="coeff_helper">
+													 <strong>коэффициент 0,75 </strong> (банковские документы идут за операцию, закрывающие - за половину операции)
+													</Tooltip>
+												  }
+												>
+												  <Button variant="secondary" style = {{width: "30px", height: "30px", marginLeft: "8px", borderRadius: "40px", padding: "0px 0px"}}>?</Button>
+												</OverlayTrigger>
+											</ButtonToolbar>
+										</div>
                                         <label> Сотрудники </label>
                                         <input className={"input-calc"+(this.state.validEmployers?'':'-error')} type="number" onChange={this.onEmployersChange} value={this.state.employers} placeholder="Введите значение"></input>
                                         <p id="errorMessage">{this.state.validEmployersMessage}</p>
@@ -757,6 +775,7 @@ class Restore extends React.Component {
 							visible={this.state.restoreVisible}
 							documentCoeficient={this.state.documentCoeficient}
 							kkm = {this.state.kkm}
+							director = {this.state.director}
 							updateDocuments = {this.restoreDocumentCalculate}
 						/>	
 						<Documents
@@ -767,6 +786,7 @@ class Restore extends React.Component {
 							visible={this.state.lastMonthVisible}
 							documentCoeficient={this.state.documentCoeficient}							
 							kkm = {this.state.kkm}
+							director = {this.state.director}
 							updateDocuments = {this.lastMonthDocumentCalculate}
 						/>
 					</div>						
@@ -812,7 +832,9 @@ class Documents extends React.Component {
 			cashboxCloseDoc:0,
 			employers: 0,
 			employersCloseDoc: 0,
-			employersMonth: 0
+			employersMonth: 0,
+			director: 0
+			
 			
         };
     }
@@ -838,23 +860,6 @@ class Documents extends React.Component {
 				employersCloseDoc: this.state.coefficients.employers * this.props.employers,
 				employersMonth: this.props.month
 			});
-		
-			/*if (this.props.kkm !== this.state.kkm)
-			{
-				this.setState ({
-					month: this.props.month,
-					kkm: this.props.kkm,
-					cashbox: this.props.kkm * 30 * this.props.month,
-					cashboxCloseDoc : this.props.month * this.props.kkm
-				});
-			}
-			
-			if ( this.state.employers !== this.props.employers)
-			{
-				this.setState({				
-					employers: this.props.employers
-				});
-			}*/
 			
 			setTimeout (() => {this.calculateAccountingDocuments()}, 50);
 		}
@@ -869,7 +874,7 @@ class Documents extends React.Component {
 				cashboxCloseDoc : this.props.month * nextProps.kkm
 			});
 			
-			setTimeout (() => {this.calculateAccountingDocuments()}, 50);
+			setTimeout(() => {this.calculateAccountingDocuments()}, 50);
 		}
 		
 		if (this.state.month !== nextProps.month)
@@ -892,7 +897,35 @@ class Documents extends React.Component {
 			});
 			
 			setTimeout (() => {this.calculateAccountingDocuments()}, 50);
-		}	
+		}
+		
+		if ( this.state.director !== nextProps.director)
+		{				
+			this.setState ({
+					director: nextProps.director
+			});
+			
+			setTimeout(() => {this.changeCoefficient()}, 50);	
+			setTimeout(() => {this.calculateAccountingDocuments()}, 100);	
+				
+		}		
+	}
+	
+	changeCoefficient = () => {
+	
+		let diff = (0.25 * this.state.director)
+		this.setState ({
+			coefficients: {
+				buy: 1 - diff,
+				sell: 1 - diff,
+				equaring:1,
+				bankComission: 0.25,
+				tax: 1,
+				incomingBankOrder: 1 - diff,
+				outgoingBankOrder:1 - diff,
+				employers: 3
+			}
+		});
 	}
 
     onEquaringChange = (e) => {
@@ -1177,7 +1210,7 @@ class Documents extends React.Component {
 	}
 	
 	calculateAccountingDocuments = () =>
-	{
+	{		
 		this.setState ({ 
 			accountingDocuments : {
 				buy: (this.state.documents.buyCount + this.state.closedDocuments.buyCount) * this.state.coefficients.buy,
