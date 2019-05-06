@@ -827,6 +827,7 @@ class Documents extends React.Component {
 				tax: 1,
 				incomingBankOrder: 1,
 				outgoingBankOrder:1,
+				corpCardPay: 1,
 				employers: 3
 			},
 			accountingDocuments : {
@@ -837,6 +838,7 @@ class Documents extends React.Component {
 				tax: 0,
 				incomingBankOrder: 0,
 				outgoingBankOrder: 0,
+				corpCardPay: 0,
 				cashbox : 0,
 				employers : 0			
 			},
@@ -867,7 +869,8 @@ class Documents extends React.Component {
 					bankComissionCount: 0,
 					taxCount: 0,
 					incomingBankOrder: this.props.documents.incomingBankOrder,
-					outgoingBankOrder: this.props.documents.outgoingBankOrder
+					outgoingBankOrder: this.props.documents.outgoingBankOrder,
+					corpCardPay : this.props.documents.corpCardPay
 				},
 				month: this.props.month,
 				kkm: this.props.kkm,
@@ -940,6 +943,7 @@ class Documents extends React.Component {
 				tax: 1,
 				incomingBankOrder: 1 - diff,
 				outgoingBankOrder:1 - diff,
+				corpCardPay: 1- diff,
 				employers: 3
 			}
 		});
@@ -955,7 +959,8 @@ class Documents extends React.Component {
 				bankComissionCount: this.state.closedDocuments.bankComissionCount,
 				taxCount: this.state.closedDocuments.taxCount,
 				incomingBankOrder: this.state.closedDocuments.incomingBankOrder,
-				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
+				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder,
+				corpCardPay : this.state.documents.corpCardPay
             }
         });
 		
@@ -971,7 +976,8 @@ class Documents extends React.Component {
 				bankComissionCount: value,
 				taxCount: this.state.closedDocuments.taxCount,
 				incomingBankOrder: this.state.closedDocuments.incomingBankOrder,
-				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
+				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder,
+				corpCardPay : this.state.documents.corpCardPay
             }
         });
 		
@@ -988,7 +994,8 @@ class Documents extends React.Component {
 				bankComissionCount: this.state.closedDocuments.bankComissionCount,
 				taxCount: this.state.closedDocuments.taxCount,
 				incomingBankOrder: this.state.closedDocuments.incomingBankOrder,
-				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
+				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder,
+				corpCardPay : this.state.documents.corpCardPay
             }
         });
 		
@@ -1004,7 +1011,8 @@ class Documents extends React.Component {
 				bankComissionCount: this.state.closedDocuments.bankComissionCount,
 				taxCount: this.state.closedDocuments.taxCount,
 				incomingBankOrder: this.state.closedDocuments.incomingBankOrder,
-				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
+				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder,
+				corpCardPay : this.state.documents.corpCardPay
             }
         });
 		
@@ -1021,7 +1029,8 @@ class Documents extends React.Component {
 				bankComissionCount: this.state.closedDocuments.bankComissionCount,
 				taxCount: value,
 				incomingBankOrder: this.state.closedDocuments.incomingBankOrder,
-				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
+				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder,
+				corpCardPay : this.state.documents.corpCardPay
             }
         });
 		
@@ -1038,7 +1047,8 @@ class Documents extends React.Component {
 				bankComissionCount: this.state.closedDocuments.bankComissionCount,
 				taxCount: this.state.closedDocuments.taxCount,
 				incomingBankOrder: value,
-				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder
+				outgoingBankOrder:this.state.closedDocuments.outgoingBankOrder,
+				corpCardPay : this.state.documents.corpCardPay
             }
         });
 		
@@ -1055,12 +1065,32 @@ class Documents extends React.Component {
 				bankComissionCount: this.state.closedDocuments.bankComissionCount,
 				taxCount: this.state.closedDocuments.taxCount,
 				incomingBankOrder: this.state.closedDocuments.incomingBankOrder,
-				outgoingBankOrder: value
+				outgoingBankOrder: value,
+				corpCardPay : this.state.documents.corpCardPay
             }
         });
 		
 		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
+	
+	onCorpCardPayChange = (e) => {
+		let value = parseInt(e.target.value, 10);
+        this.setState({
+            closedDocuments: {
+                buyCount: this.state.closedDocuments.buyCount,
+				sellCount: this.state.closedDocuments.sellCount,
+				equaringCount:this.state.closedDocuments.equaringCount,
+				bankComissionCount: this.state.closedDocuments.bankComissionCount,
+				taxCount: this.state.closedDocuments.taxCount,
+				incomingBankOrder: this.state.closedDocuments.incomingBankOrder,
+				outgoingBankOrder: this.state.closedDocuments.outgoingBankOrder,
+				corpCardPay : value
+            }
+        });
+		
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+	}
+	
 	
 	onCashboxChange = (e) => 
 	{
@@ -1111,6 +1141,7 @@ class Documents extends React.Component {
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				corpCardPay: this.state.coefficients.corpCardPay,
 				employers: this.state.employers
 			}
         });
@@ -1129,6 +1160,7 @@ class Documents extends React.Component {
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				corpCardPay: this.state.coefficients.corpCardPay,
 				employers: this.state.employers
 			}
         });
@@ -1147,6 +1179,7 @@ class Documents extends React.Component {
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				corpCardPay: this.state.coefficients.corpCardPay,
 				employers: this.state.employers
 			}
         });
@@ -1154,7 +1187,7 @@ class Documents extends React.Component {
 		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
-		onBankComissionCoefficientChange = (e) => {
+	onBankComissionCoefficientChange = (e) => {
 		let value = e.target.value;
 		this.setState({
             coefficients: {
@@ -1165,6 +1198,7 @@ class Documents extends React.Component {
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				corpCardPay: this.state.coefficients.corpCardPay,
 				employers: this.state.employers
 			}
         });
@@ -1183,6 +1217,7 @@ class Documents extends React.Component {
 				tax: value,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				corpCardPay: this.state.coefficients.corpCardPay,
 				employers: this.state.employers
 			}
         });
@@ -1201,6 +1236,7 @@ class Documents extends React.Component {
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: value,
 				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				corpCardPay: this.state.coefficients.corpCardPay,
 				employers: this.state.employers
 			}
         });
@@ -1219,6 +1255,25 @@ class Documents extends React.Component {
 				tax: this.state.coefficients.tax,
 				incomingBankOrder: this.state.coefficients.incomingBankOrder,
 				outgoingBankOrder:value,
+				corpCardPay: this.state.coefficients.corpCardPay,
+				employers: this.state.employers
+			}
+        });
+		
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+	}
+	onCorpCardPayCoefficientChange = (e) => {
+		let value = e.target.value;
+		this.setState({
+            coefficients: {
+				buy: this.state.coefficients.buy,
+				sell: this.state.coefficients.sell,
+				equaring:this.state.coefficients.equaring,
+				bankComission: this.state.coefficients.bankComission,
+				tax: this.state.coefficients.tax,
+				incomingBankOrder: this.state.coefficients.incomingBankOrder,
+				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				corpCardPay : value,
 				employers: this.state.employers
 			}
         });
@@ -1237,6 +1292,7 @@ class Documents extends React.Component {
 				tax: (this.state.documents.taxCount + this.state.closedDocuments.taxCount) * this.state.coefficients.tax,
 				incomingBankOrder: (this.state.documents.incomingBankOrder + this.state.closedDocuments.incomingBankOrder) * this.state.coefficients.incomingBankOrder,
 				outgoingBankOrder: (this.state.documents.outgoingBankOrder + this.state.closedDocuments.outgoingBankOrder) * this.state.coefficients.outgoingBankOrder,
+				corpCardPay: (this.state.documents.corpCardPay + this.state.closedDocuments.corpCardPay) * this.state.coefficients.corpCardPay,
 				cashbox: this.state.cashbox + this.state.cashboxCloseDoc,
 				employers: this.state.employersCloseDoc * this.state.employersMonth
 			}
@@ -1254,6 +1310,7 @@ class Documents extends React.Component {
 			+ docs.bankComission 
 			+ docs.incomingBankOrder 
 			+ docs.outgoingBankOrder 
+			+ docs.corpCardPay
 			+ docs.cashbox
 			+ docs.employers;
 			
@@ -1350,6 +1407,13 @@ class Documents extends React.Component {
 									<td><input className="input-table" type="number" value={this.state.closedDocuments.outgoingBankOrder} onChange={this.onOutgoingBankOrderChange} onBlur = {this.onUpdateDocuments}></input></td>
                                     <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.outgoingBankOrder} onChange={this.onOutgoingBankOrderCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
                                     <td>{this.state.accountingDocuments.outgoingBankOrder}</td>
+                                </tr>
+								<tr>
+                                    <td className="row-name"><p>Оплата <br />по корп.карте</p></td>
+                                    <td>{this.state.documents.corpCardPay}</td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.corpCardPay} onChange={this.onCorpCardPayChange} onBlur = {this.onUpdateDocuments}></input></td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.corpCardPay} onChange={this.onCorpCardPayCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
+                                    <td>{this.state.accountingDocuments.corpCardPay}</td>
                                 </tr>
 								<tr>
                                     <td colSpan="5"></td>
