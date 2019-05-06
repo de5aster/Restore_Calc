@@ -1231,7 +1231,7 @@ class Documents extends React.Component {
 		this.setState ({ 
 			accountingDocuments : {
 				buy: (this.state.documents.buyCount + this.state.closedDocuments.buyCount) * this.state.coefficients.buy,
-				sell: (this.state.documents.equaringCount + this.state.closedDocuments.equaringCount) * this.state.coefficients.equaring,
+				sell: (this.state.documents.sellCount + this.state.closedDocuments.sellCount) * this.state.coefficients.sell,
 				equaring: (this.state.documents.equaringCount + this.state.closedDocuments.equaringCount) * this.state.coefficients.equaring,
 				bankComission: (this.state.documents.bankComissionCount + this.state.closedDocuments.bankComissionCount) * this.state.coefficients.bankComission,
 				tax: (this.state.documents.taxCount + this.state.closedDocuments.taxCount) * this.state.coefficients.tax,
