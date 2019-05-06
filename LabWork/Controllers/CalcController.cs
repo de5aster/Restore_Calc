@@ -40,7 +40,7 @@ namespace RestoreCalculator.Controllers
         {
             if (files == null || files.Base64Content.Length == 0)
             {
-                return BadRequest("Empty file");
+                return BadRequest("Файл не может быть пустым. Выберите файл.");
             }
 
             var calculatorService = new CalculatorService();
@@ -48,7 +48,6 @@ namespace RestoreCalculator.Controllers
 
             var bs = BankStatementReader.ReadFromByteArrayList(byteArrayList, Encoding.GetEncoding(1251));
             var info = calculatorService.GetInfoFromStatementList(bs);
-            //return Ok(CreateResponse.Create(info));
             return Ok(info);
         }        
     }

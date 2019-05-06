@@ -12,7 +12,7 @@ namespace RestoreCalculator
                  .UseContentRoot(Directory.GetCurrentDirectory())
                  .UseIISIntegration()
                  .UseStartup<Startup>()
-                 .UseUrls("http://localhost:5021/")
+                 .UseUrls("http://localhost:5020/")
                  .Build();
             host.Run();
         }       
