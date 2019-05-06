@@ -132,6 +132,7 @@ class Alert extends React.Component {
         this.setState({
             show: false
         });
+		setTimeout(this.props.onShowChange(false), 50);
     }
     render () {
         return (
@@ -207,45 +208,60 @@ class ContentCalc extends React.Component {
             }
         };
     }
-    setErrorMessage = (value) => {
-        this.setState({
-            error: value,
-            showAlert: true
-        });
-    }
 
     onChangeFile = (e) => {
         fileArray = [];
         let filesLength = e.target.files.length; 
         let files = e.target.files;
         for (let i = 0; i < filesLength; i++)
-        {
-            this.toBase64(files[i], i);
+        {		
+			console.log(files[i].type);
+
+			if (files[i].type == "text/plain")
+			{
+				this.toBase64(files[i], i);
+			} else {
+				this.setErrorMessage("Некорретный тип файла. Выписка должна быть в формате 1С с типом файла .*txt");
+			}            
         }
         this.setState({
             files: fileArray,
-            filesLength: filesLength,
-            showAlert: false
+            filesLength: filesLength			
         });
     }
 
     toBase64 = (file, i) => {
         var reader = new FileReader();
         reader.onloadend = function () {
-            fileArray[i] = reader.result.replace("data:text/plain;base64,", "");
-        }
-        if (file) {
-            reader.readAsDataURL(file);
-        } else {
-            return "error";
-        }
+			fileArray[i] = reader.result.replace("data:text/plain;base64,", "");		
+        };
+		if(file) {
+			reader.readAsDataURL(file);
+		}
+	}
+	
+	setErrorMessage = (value) => {
+        this.setState({
+            error: value,
+            showAlert: true
+        });
     }
+
     onMoreLoadClick = () =>
     {
         this.setState({
             visible: false
         });
     }
+	onShowChange = (value) => {
+		if(value !== null)
+		{
+			this.setState({
+				showAlert: value
+			});
+		}
+
+	}
 
     render() {
         return (
@@ -281,6 +297,7 @@ class ContentCalc extends React.Component {
                 <Alert
                     message={this.state.error}
                     show={this.state.showAlert}
+					onShowChange = {this.onShowChange}
                 />
             </div>
         );
