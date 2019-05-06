@@ -281,7 +281,7 @@ class ContentCalc extends React.Component {
                             />
                             <HelpBlock>Выписка должна быть в формате 1С с типом файла .*txt</HelpBlock>
                         </FormGroup>
-                        <Button bsStyle="primary" type="submit" disabled={!this.state.files}>Загрузить</Button>
+                        <Button bsStyle="primary" type="submit" disabled={this.state.filesLength===0}>Загрузить</Button>
                     </form>
                 </div>
                 <div className={"load" + (this.state.visible ? '_on' : '')} style={{ marginBottom: "10px" }}>
