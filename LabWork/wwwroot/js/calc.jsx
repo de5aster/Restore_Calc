@@ -1362,57 +1362,57 @@ class Documents extends React.Component {
                                 <tr>
                                     <td className="row-name">Покупки</td>
                                     <td> (   {this.state.documents.buyCount}   +</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.buyCount} onChange={this.onBuyChange} onBlur = {this.onUpdateDocuments}></input> ) *</td>
-									<td className="td-equival"><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.buy} onChange= {this.onBuyCoefficientChange} onBlur ={this.onUpdateDocuments}/> = </td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.buyCount} onChange={this.onBuyChange}></input> ) *</td>
+									<td className="td-equival"><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.buy} onChange= {this.onBuyCoefficientChange}/> = </td>
                                     <td>{this.state.accountingDocuments.buy}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Продажи</td>
                                     <td>(    {this.state.documents.sellCount}    +</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.sellCount} onChange={this.onSellChange} onBlur = {this.onUpdateDocuments}></input>        ) *</td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.sell} onChange={this.onSellCoefficientChange} onBlur = {this.onUpdateDocuments}/> =</td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.sellCount} onChange={this.onSellChange}></input>        ) *</td>
+									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.sell} onChange={this.onSellCoefficientChange}/> =</td>
                                     <td>{this.state.accountingDocuments.sell}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Эквайринг</td>
                                     <td>{this.state.documents.equaringCount}</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.equaringCount} onChange={this.onEquaringChange} onBlur = {this.onUpdateDocuments}/></td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.equaring} onChange={this.onEquaringCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.equaringCount} onChange={this.onEquaringChange}/></td>
+									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.equaring} onChange={this.onEquaringCoefficientChange}/></td>
                                     <td>{this.state.accountingDocuments.equaring}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Комиссия банка</td>
                                     <td>{this.state.documents.bankComissionCount}</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.bankComissionCount} onChange={this.onBankComissionChange} onBlur = {this.onUpdateDocuments}></input></td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.bankComission} onChange={this.onBankComissionCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.bankComissionCount} onChange={this.onBankComissionChange}></input></td>
+									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.bankComission} onChange={this.onBankComissionCoefficientChange}/></td>
                                     <td>{this.state.accountingDocuments.bankComission}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Налоговые платежи</p></td>
                                     <td>{this.state.documents.taxCount}</td>
-									<td><input className="input-table" type="number" value={this.state.closedDocuments.taxCount} onChange={this.onTaxChange} onBlur = {this.onUpdateDocuments}></input></td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.tax} onChange={this.onTaxCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.taxCount} onChange={this.onTaxChange}></input></td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.tax} onChange={this.onTaxCoefficientChange}/></td>
                                     <td>{this.state.accountingDocuments.tax}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Входящий <br/>банк.ордер</p></td>
                                     <td>{this.state.documents.incomingBankOrder}</td>
-									<td><input className="input-table" type="number" value={this.state.closedDocuments.incomingBankOrder} onChange={this.onIncomingBankOrderChange} onBlur = {this.onUpdateDocuments}></input></td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.incomingBankOrder} onChange={this.onIncomingBankOrderCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.incomingBankOrder} onChange={this.onIncomingBankOrderChange}></input></td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.incomingBankOrder} onChange={this.onIncomingBankOrderCoefficientChange}/></td>
                                     <td>{this.state.accountingDocuments.incomingBankOrder}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Исходящий <br />банк.ордер</p></td>
                                     <td>{this.state.documents.outgoingBankOrder}</td>
-									<td><input className="input-table" type="number" value={this.state.closedDocuments.outgoingBankOrder} onChange={this.onOutgoingBankOrderChange} onBlur = {this.onUpdateDocuments}></input></td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.outgoingBankOrder} onChange={this.onOutgoingBankOrderCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.outgoingBankOrder} onChange={this.onOutgoingBankOrderChange}></input></td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.outgoingBankOrder} onChange={this.onOutgoingBankOrderCoefficientChange}/></td>
                                     <td>{this.state.accountingDocuments.outgoingBankOrder}</td>
                                 </tr>
 								<tr>
                                     <td className="row-name"><p>Оплата <br />по корп.карте</p></td>
                                     <td>{this.state.documents.corpCardPay}</td>
-									<td><input className="input-table" type="number" value={this.state.closedDocuments.corpCardPay} onChange={this.onCorpCardPayChange} onBlur = {this.onUpdateDocuments}></input></td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.corpCardPay} onChange={this.onCorpCardPayCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.corpCardPay} onChange={this.onCorpCardPayChange}></input></td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.corpCardPay} onChange={this.onCorpCardPayCoefficientChange}/></td>
                                     <td>{this.state.accountingDocuments.corpCardPay}</td>
                                 </tr>
 								<tr>
@@ -1420,8 +1420,8 @@ class Documents extends React.Component {
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Касса</p></td>
-									<td><input className="input-table" type="number" value={this.state.cashbox} onChange={this.onCashboxChange} onBlur = {this.onUpdateDocuments}></input></td>
-									<td><input className="input-table" type="number" value={this.state.cashboxCloseDoc} onChange={this.onCashboxCloseDocsChange} onBlur = {this.onUpdateDocuments}></input></td>								
+									<td><input className="input-table" type="number" value={this.state.cashbox} onChange={this.onCashboxChange}></input></td>
+									<td><input className="input-table" type="number" value={this.state.cashboxCloseDoc} onChange={this.onCashboxCloseDocsChange}></input></td>							
 									<td></td>
                                     <td>{this.state.accountingDocuments.cashbox}</td>
                                 </tr>
@@ -1431,8 +1431,8 @@ class Documents extends React.Component {
 								<tr>
                                     <td className="row-name"><p>Сотрудники</p></td>
 									<td>{this.state.employers} сотр.</td>	
-									<td><input className="input-table" type="number" value={this.state.employersCloseDoc} onChange={this.onEmployersCloseDocChange} onBlur = {this.onUpdateDocuments}></input></td>									
-									<td><input className="input-table" type="number" value={this.state.employersMonth} onChange={this.onEmployersMonthChange} onBlur = {this.onUpdateDocuments}></input></td>
+									<td><input className="input-table" type="number" value={this.state.employersCloseDoc} onChange={this.onEmployersCloseDocChange}></input></td>									
+									<td><input className="input-table" type="number" value={this.state.employersMonth} onChange={this.onEmployersMonthChange}></input></td>
 									
                                     <td>{this.state.accountingDocuments.employers}</td>
                                 </tr>
