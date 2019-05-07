@@ -1352,67 +1352,67 @@ class Documents extends React.Component {
                             <thead>
                                 <tr>
                                     <th className="row-name">Наименование</th>
-                                    <th>Кол-во операций в&nbsp;банковской выписке </th>
-                                    <th>Кол-во закрывающих документов </th>									
+                                    <th>Операций в&nbsp;банковской выписке </th>
+                                    <th>Закрывающих документов </th>									
 									<th>Коэффициент</th>
-                                    <th>Кол-во бухгалтерских операций в&nbsp;расчете</th>
+                                    <th>Бухгалтерских операций в&nbsp;расчете</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td className="row-name">Покупки</td>
-                                    <td> (   {this.state.documents.buyCount}   +</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.buyCount} onChange={this.onBuyChange}></input> ) *</td>
-									<td className="td-equival"><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.buy} onChange= {this.onBuyCoefficientChange}/> = </td>
+                                    <td> (&nbsp;&nbsp;{this.state.documents.buyCount}&nbsp;&nbsp;&nbsp;+</td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.buyCount} onChange={this.onBuyChange}></input>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
+									<td className="td-equival"><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.buy} onChange= {this.onBuyCoefficientChange}/>&nbsp;&nbsp;= </td>
                                     <td>{this.state.accountingDocuments.buy}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Продажи</td>
-                                    <td>(    {this.state.documents.sellCount}    +</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.sellCount} onChange={this.onSellChange}></input>        ) *</td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.sell} onChange={this.onSellCoefficientChange}/> =</td>
+                                    <td>(&nbsp;&nbsp;{this.state.documents.sellCount}&nbsp;&nbsp;&nbsp;+</td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.sellCount} onChange={this.onSellChange}></input>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
+									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.sell} onChange={this.onSellCoefficientChange}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.sell}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Эквайринг</td>
-                                    <td>{this.state.documents.equaringCount}</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.equaringCount} onChange={this.onEquaringChange}/></td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.equaring} onChange={this.onEquaringCoefficientChange}/></td>
+                                    <td>(&nbsp;&nbsp;{this.state.documents.equaringCount}&nbsp;&nbsp;&nbsp;+</td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.equaringCount} onChange={this.onEquaringChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
+									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.equaring} onChange={this.onEquaringCoefficientChange}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.equaring}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Комиссия банка</td>
-                                    <td>{this.state.documents.bankComissionCount}</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.bankComissionCount} onChange={this.onBankComissionChange}></input></td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.bankComission} onChange={this.onBankComissionCoefficientChange}/></td>
+                                    <td>(&nbsp;&nbsp;{this.state.documents.bankComissionCount}&nbsp;&nbsp;&nbsp;+</td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.bankComissionCount} onChange={this.onBankComissionChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
+									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.bankComission} onChange={this.onBankComissionCoefficientChange}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.bankComission}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Налоговые платежи</p></td>
-                                    <td>{this.state.documents.taxCount}</td>
-									<td><input className="input-table" type="number" value={this.state.closedDocuments.taxCount} onChange={this.onTaxChange}></input></td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.tax} onChange={this.onTaxCoefficientChange}/></td>
+                                    <td>(&nbsp;&nbsp;{this.state.documents.taxCount}&nbsp;&nbsp;&nbsp;+</td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.taxCount} onChange={this.onTaxChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.tax} onChange={this.onTaxCoefficientChange}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.tax}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Входящий <br/>банк.ордер</p></td>
-                                    <td>{this.state.documents.incomingBankOrder}</td>
-									<td><input className="input-table" type="number" value={this.state.closedDocuments.incomingBankOrder} onChange={this.onIncomingBankOrderChange}></input></td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.incomingBankOrder} onChange={this.onIncomingBankOrderCoefficientChange}/></td>
+                                    <td>(&nbsp;&nbsp;{this.state.documents.incomingBankOrder}&nbsp;&nbsp;&nbsp;+</td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.incomingBankOrder} onChange={this.onIncomingBankOrderChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.incomingBankOrder} onChange={this.onIncomingBankOrderCoefficientChange}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.incomingBankOrder}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Исходящий <br />банк.ордер</p></td>
-                                    <td>{this.state.documents.outgoingBankOrder}</td>
-									<td><input className="input-table" type="number" value={this.state.closedDocuments.outgoingBankOrder} onChange={this.onOutgoingBankOrderChange}></input></td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.outgoingBankOrder} onChange={this.onOutgoingBankOrderCoefficientChange}/></td>
+                                    <td>(&nbsp;&nbsp;{this.state.documents.outgoingBankOrder}&nbsp;&nbsp;&nbsp;+</td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.outgoingBankOrder} onChange={this.onOutgoingBankOrderChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.outgoingBankOrder} onChange={this.onOutgoingBankOrderCoefficientChange}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.outgoingBankOrder}</td>
                                 </tr>
 								<tr>
                                     <td className="row-name"><p>Оплата <br />по корп.карте</p></td>
-                                    <td>{this.state.documents.corpCardPay}</td>
-									<td><input className="input-table" type="number" value={this.state.closedDocuments.corpCardPay} onChange={this.onCorpCardPayChange}></input></td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.corpCardPay} onChange={this.onCorpCardPayCoefficientChange}/></td>
+                                    <td>(&nbsp;&nbsp;{this.state.documents.corpCardPay}&nbsp;&nbsp;&nbsp;+</td>
+									<td><input className="input-table" type="number" value={this.state.closedDocuments.corpCardPay} onChange={this.onCorpCardPayChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
+                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.corpCardPay} onChange={this.onCorpCardPayCoefficientChange}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.corpCardPay}</td>
                                 </tr>
 								<tr>
@@ -1420,8 +1420,8 @@ class Documents extends React.Component {
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Касса</p></td>
-									<td><input className="input-table" type="number" value={this.state.cashbox} onChange={this.onCashboxChange}></input></td>
-									<td><input className="input-table" type="number" value={this.state.cashboxCloseDoc} onChange={this.onCashboxCloseDocsChange}></input></td>							
+									<td><input className="input-table" type="number" value={this.state.cashbox} onChange={this.onCashboxChange}/>&nbsp;&nbsp;+</td>
+									<td><input className="input-table" type="number" value={this.state.cashboxCloseDoc} onChange={this.onCashboxCloseDocsChange}/>&nbsp;&nbsp;=</td>							
 									<td></td>
                                     <td>{this.state.accountingDocuments.cashbox}</td>
                                 </tr>
@@ -1431,8 +1431,8 @@ class Documents extends React.Component {
 								<tr>
                                     <td className="row-name"><p>Сотрудники</p></td>
 									<td>{this.state.employers} сотр.</td>	
-									<td><input className="input-table" type="number" value={this.state.employersCloseDoc} onChange={this.onEmployersCloseDocChange}></input></td>									
-									<td><input className="input-table" type="number" value={this.state.employersMonth} onChange={this.onEmployersMonthChange}></input></td>
+									<td><input className="input-table" type="number" value={this.state.employersCloseDoc} onChange={this.onEmployersCloseDocChange}/>&nbsp;&nbsp;*</td>									
+									<td><input className="input-table" type="number" value={this.state.employersMonth} onChange={this.onEmployersMonthChange}/>&nbsp;&nbsp;=</td>
 									
                                     <td>{this.state.accountingDocuments.employers}</td>
                                 </tr>
