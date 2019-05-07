@@ -1343,9 +1343,9 @@ class Documents extends React.Component {
                     </Panel.Heading>
                     <Panel.Body>
                         <div>
-                            <p>Период выписки с {this.ConvertToString(this.props.dates.period.dateFrom).slice(0,10)} по {this.ConvertToString(this.props.dates.period.dateTo).slice(0,10)}</p>
-                            <p>Месяцев в выписке: {this.props.dates.period.monthCount}</p>
-							<p>Последний полный месяц: {this.props.dates.lastMonth}</p>
+                            <p className="p-docs">Период выписки с {this.ConvertToString(this.props.dates.period.dateFrom).slice(0,10)} по {this.ConvertToString(this.props.dates.period.dateTo).slice(0,10)}</p>
+                            <p className="p-docs">Месяцев в выписке: {this.props.dates.period.monthCount}</p>
+							<p className="p-docs">Последний полный месяц: {this.props.dates.lastMonth}</p>
                         </div>
 
                         <Table striped bordered condensed hover style={{ maxWidth: "550px" }}>
@@ -1361,16 +1361,16 @@ class Documents extends React.Component {
                             <tbody>
                                 <tr>
                                     <td className="row-name">Покупки</td>
-                                    <td>{this.state.documents.buyCount}</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.buyCount} onChange={this.onBuyChange} onBlur = {this.onUpdateDocuments}></input></td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.buy} onChange= {this.onBuyCoefficientChange} onBlur ={this.onUpdateDocuments}/></td>
+                                    <td> (   {this.state.documents.buyCount}   +</td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.buyCount} onChange={this.onBuyChange} onBlur = {this.onUpdateDocuments}></input> ) *</td>
+									<td className="td-equival"><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.buy} onChange= {this.onBuyCoefficientChange} onBlur ={this.onUpdateDocuments}/> = </td>
                                     <td>{this.state.accountingDocuments.buy}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Продажи</td>
-                                    <td>{this.state.documents.sellCount}</td>
-                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.sellCount} onChange={this.onSellChange} onBlur = {this.onUpdateDocuments}></input></td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.sell} onChange={this.onSellCoefficientChange} onBlur = {this.onUpdateDocuments}/></td>
+                                    <td>(    {this.state.documents.sellCount}    +</td>
+                                    <td><input className="input-table" type="number" value={this.state.closedDocuments.sellCount} onChange={this.onSellChange} onBlur = {this.onUpdateDocuments}></input>        ) *</td>
+									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.sell} onChange={this.onSellCoefficientChange} onBlur = {this.onUpdateDocuments}/> =</td>
                                     <td>{this.state.accountingDocuments.sell}</td>
                                 </tr>
                                 <tr>

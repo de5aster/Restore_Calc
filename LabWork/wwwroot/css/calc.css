@@ -7,7 +7,6 @@ th {
    max-width: 125px;
 }
 td {
-   max-width: 125px;
    margin: auto;
 }
 .row-name {
@@ -150,7 +149,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .input-table {   
-    max-width: 113px;
+    max-width: 60px;
 }
 
 .modal-link {
@@ -167,4 +166,8 @@ textarea {
 
 .director {
     display: flex;
+}
+
+.p-docs {
+    margin: 0 0 1px;
 }
