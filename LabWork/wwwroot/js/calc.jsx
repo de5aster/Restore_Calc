@@ -512,8 +512,12 @@ class Restore extends React.Component {
 							visible: true
 						});
 					}
+					if (xhr.status === 409)
+					{
+						alert ("Пустые параметры запроса.");
+					}
 					if (xhr.status === 400) {
-							alert("Произошла ошибка, повторите попытку.");
+						alert("Произошла ошибка, повторите попытку.");
 					}
 				}
 			};
@@ -539,6 +543,10 @@ class Restore extends React.Component {
 							currentPrice: price,
 							visible: true
 						});
+					}
+					if (xhr.status === 409)
+					{
+						alert ("Пустые параметры запроса.");
 					}
 					if (xhr.status === 400) {
 						alert("Произошла ошибка, повторите попытку.");

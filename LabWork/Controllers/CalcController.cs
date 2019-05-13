@@ -16,17 +16,25 @@ namespace RestoreCalculator.Controllers
         
         [HttpPost]
         [Route ("restore")]
-        public IActionResult Restore([FromBody] RestoreParam restoreParam)
+        public IActionResult Restore([FromBody] ClientParameters parameters)
         {
-            var res = calcService.GetRestorePrice(restoreParam);
+            if (parameters == null)
+            {
+                return StatusCode(409);
+            }
+            var res = calcService.GetRestorePrice(parameters);
             return Ok(res);
         }
 
         [HttpPost]
         [Route("current")]
-        public IActionResult CurrentPrice([FromBody] RestoreParam restoreParam)
+        public IActionResult CurrentPrice([FromBody] ClientParameters parameters)
         {
-            var res = calcService.GetCurrentPrice(restoreParam);
+            if (parameters == null)
+            {
+                return StatusCode(409);
+            }
+            var res = calcService.GetCurrentPrice(parameters);
             return Ok(res);
         }
 
