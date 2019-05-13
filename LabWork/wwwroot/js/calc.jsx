@@ -214,9 +214,7 @@ class ContentCalc extends React.Component {
         let filesLength = e.target.files.length; 
         let files = e.target.files;
         for (let i = 0; i < filesLength; i++)
-        {		
-			console.log(files[i].type);
-
+        {
 			if (files[i].type == "text/plain")
 			{
 				this.toBase64(files[i], i);
@@ -958,7 +956,7 @@ class Documents extends React.Component {
 	}
 
     onEquaringChange = (e) => {
-        let value = parseInt(e.target.value, 10);
+		let value = this.getValueFromDocsInput(e);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -972,10 +970,11 @@ class Documents extends React.Component {
             }
         });
 		
-			setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
     }
+	
     onBankComissionChange = (e) => {
-        let value = parseInt(e.target.value, 10);
+		let value = this.getValueFromDocsInput(e);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -993,7 +992,7 @@ class Documents extends React.Component {
     }
 
     onBuyChange = (e) => {
-		let value = parseInt(e.target.value, 10);
+		let value = this.getValueFromDocsInput(e);
         this.setState({
             closedDocuments: {
                 buyCount: value,
@@ -1010,7 +1009,7 @@ class Documents extends React.Component {
 		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
     }
     onSellChange = (e) => {
-        let value = parseInt(e.target.value, 10);
+        let value = this.getValueFromDocsInput(e);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -1028,7 +1027,7 @@ class Documents extends React.Component {
     }
 	
 	onTaxChange = (e) => {
-		let value = parseInt(e.target.value, 10);
+		let value = this.getValueFromDocsInput(e);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -1046,7 +1045,7 @@ class Documents extends React.Component {
 	}
 	
 	onIncomingBankOrderChange = (e) => {
-		let value = parseInt(e.target.value, 10);
+		let value = this.getValueFromDocsInput(e);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -1064,7 +1063,7 @@ class Documents extends React.Component {
 	}
 	
 	onOutgoingBankOrderChange = (e) => {
-		let value = parseInt(e.target.value, 10);
+		let value = this.getValueFromDocsInput(e);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -1082,7 +1081,7 @@ class Documents extends React.Component {
 	}
 	
 	onCorpCardPayChange = (e) => {
-		let value = parseInt(e.target.value, 10);
+		let value = this.getValueFromDocsInput(e);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -1102,7 +1101,7 @@ class Documents extends React.Component {
 	
 	onCashboxChange = (e) => 
 	{
-		let value = parseInt(e.target.value, 10);
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
 			cashbox: value
 		});
@@ -1112,7 +1111,7 @@ class Documents extends React.Component {
 	
 	onCashboxCloseDocsChange = (e) => 
 	{
-		let value = parseInt(e.target.value, 10);
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
 			cashboxCloseDoc: value
 		});
@@ -1121,7 +1120,7 @@ class Documents extends React.Component {
 	}
 	
 	onEmployersCloseDocChange = (e) => {
-		let value = parseInt(e.target.value , 10);
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
 			employersCloseDoc : value
 		});
@@ -1130,7 +1129,7 @@ class Documents extends React.Component {
 	}
 	
 	onEmployersMonthChange = (e) => {
-		let value = parseInt(e.target.value , 10);
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
 			employersMonth : value
 		});
@@ -1139,7 +1138,7 @@ class Documents extends React.Component {
 	}
 	
 	onBuyCoefficientChange = (e) => {
-		let value = e.target.value;
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
             coefficients: {
 				buy: value,
@@ -1158,7 +1157,7 @@ class Documents extends React.Component {
 	}
 	
 	onSellCoefficientChange = (e) => {
-		let value = e.target.value;
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1177,7 +1176,7 @@ class Documents extends React.Component {
 	}
 	
 	onEquaringCoefficientChange = (e) => {
-		let value = e.target.value;
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1196,7 +1195,7 @@ class Documents extends React.Component {
 	}
 	
 	onBankComissionCoefficientChange = (e) => {
-		let value = e.target.value;
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1215,7 +1214,7 @@ class Documents extends React.Component {
 	}
 	
 	onTaxCoefficientChange = (e) => {
-		let value = e.target.value;
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1234,7 +1233,7 @@ class Documents extends React.Component {
 	}
 	
 	onIncomingBankOrderCoefficientChange = (e) => {
-		let value = e.target.value;
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1253,7 +1252,7 @@ class Documents extends React.Component {
 	}
 	
 	onOutgoingBankOrderCoefficientChange = (e) => {
-		let value = e.target.value;
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1271,7 +1270,7 @@ class Documents extends React.Component {
 		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	onCorpCardPayCoefficientChange = (e) => {
-		let value = e.target.value;
+		let value = this.getValueFromDocsInput(e);
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1293,16 +1292,16 @@ class Documents extends React.Component {
 	{		
 		this.setState ({ 
 			accountingDocuments : {
-				buy: (this.state.documents.buyCount + this.state.closedDocuments.buyCount) * this.state.coefficients.buy,
-				sell: (this.state.documents.sellCount + this.state.closedDocuments.sellCount) * this.state.coefficients.sell,
-				equaring: (this.state.documents.equaringCount + this.state.closedDocuments.equaringCount) * this.state.coefficients.equaring,
-				bankComission: (this.state.documents.bankComissionCount + this.state.closedDocuments.bankComissionCount) * this.state.coefficients.bankComission,
-				tax: (this.state.documents.taxCount + this.state.closedDocuments.taxCount) * this.state.coefficients.tax,
-				incomingBankOrder: (this.state.documents.incomingBankOrder + this.state.closedDocuments.incomingBankOrder) * this.state.coefficients.incomingBankOrder,
-				outgoingBankOrder: (this.state.documents.outgoingBankOrder + this.state.closedDocuments.outgoingBankOrder) * this.state.coefficients.outgoingBankOrder,
-				corpCardPay: (this.state.documents.corpCardPay + this.state.closedDocuments.corpCardPay) * this.state.coefficients.corpCardPay,
+				buy: Math.round((this.state.documents.buyCount + this.state.closedDocuments.buyCount) * this.state.coefficients.buy),
+				sell: Math.round((this.state.documents.sellCount + this.state.closedDocuments.sellCount) * this.state.coefficients.sell),
+				equaring: Math.round((this.state.documents.equaringCount + this.state.closedDocuments.equaringCount) * this.state.coefficients.equaring),
+				bankComission: Math.round((this.state.documents.bankComissionCount + this.state.closedDocuments.bankComissionCount) * this.state.coefficients.bankComission),
+				tax: Math.round((this.state.documents.taxCount + this.state.closedDocuments.taxCount) * this.state.coefficients.tax),
+				incomingBankOrder: Math.round((this.state.documents.incomingBankOrder + this.state.closedDocuments.incomingBankOrder) * this.state.coefficients.incomingBankOrder),
+				outgoingBankOrder: Math.round((this.state.documents.outgoingBankOrder + this.state.closedDocuments.outgoingBankOrder) * this.state.coefficients.outgoingBankOrder),
+				corpCardPay: Math.round((this.state.documents.corpCardPay + this.state.closedDocuments.corpCardPay) * this.state.coefficients.corpCardPay),
 				cashbox: this.state.cashbox + this.state.cashboxCloseDoc,
-				employers: this.state.employersCloseDoc * this.state.employersMonth
+				employers: Math.round(this.state.employersCloseDoc * this.state.employersMonth)
 			}
 		});
 		
@@ -1327,9 +1326,7 @@ class Documents extends React.Component {
 					summaryAllDocuments: res
 				}), 50);
 		setTimeout(this.onUpdateDocuments(), 100);
-    }
-	
-	
+    }	
 	
 	ConvertToString = (e) => {
 		return ""+ e;
@@ -1340,6 +1337,15 @@ class Documents extends React.Component {
         {		
            setTimeout(this.props.updateDocuments(this.state.summaryAllDocuments), 50);
         }
+	}
+	
+	getValueFromDocsInput = (e) => {
+		if (e.target.value !=='')
+		{
+			return parseInt(e.target.value, 10);
+		}
+		
+		return 0;
 	}
 	
     render() {
@@ -1481,7 +1487,7 @@ class TopFive extends React.Component {
 							<tr>
 								<th className="row-name">Наименование</th>
 								<th>ИНН</th>
-								<th>Сумма</th>
+								<th>Сумма (руб.)</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -1492,8 +1498,8 @@ class TopFive extends React.Component {
 									return (
 									<tr>							
 										<td style = {{textAlign: "left"}}>{item.name.slice(0,50)}</td>
-										<td>{item.inn}</td>
-										<td>{item.value} руб.</td>
+										<td style = {{width: "100px"}}>{item.inn}</td>
+										<td style = {{width: "120px"}}>{item.value}</td>
 									</tr>
 									)
 								}
@@ -1546,7 +1552,6 @@ class ContactForm extends React.Component {
             if (this.state.message.length > 0) {
                 var data = JSON.stringify({ "address": this.state.email, "message": this.state.message });
                 var xhr = new XMLHttpRequest();
-                console.log(data);
                 xhr.open("post", this.props.apiUrl, true);
                 xhr.setRequestHeader("Content-type", "application/json");
                 xhr.send(data);
