@@ -8,10 +8,7 @@ namespace RestoreCalculator.Services
 {
     public class CalculatorServiceOld
     {
-        public List<Payment> PaymentList;
-        private readonly Info info = new Info();
-
-        public double GetRestorePrice(RestoreParam restoreParams) {
+        public double GetRestorePrice(ClientParameters restoreParams) {
 
             var regionCoeficient = GetRegionCoefficient(restoreParams.Region);
             var tariffId = GetRestoreTariffName(restoreParams.Document);
@@ -19,7 +16,7 @@ namespace RestoreCalculator.Services
             return Math.Round(tariff * regionCoeficient); 
         }
 
-        public double GetCurrentPrice(RestoreParam param)
+        public double GetCurrentPrice(ClientParameters param)
         {
             var regionCoeficient = GetRegionCoefficient(param.Region);
             var tariffId = GetCurrentTariffName(param.Document);

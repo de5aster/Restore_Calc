@@ -11,14 +11,6 @@ namespace RestoreCalculator.Controllers
         public IActionResult Calc()
         {
             return View();
-        }
-        public IActionResult ObList()
-        {
-            return View();
-        }
-        public IActionResult ObListAdmin()
-        {
-            return View();
-        }
+        }       
     }
 }
