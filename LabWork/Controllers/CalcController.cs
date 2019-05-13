@@ -5,6 +5,7 @@ using RestoreCalculator.Services;
 using BankStatementCalculatorCore.Services;
 using BankStatementCalculatorCore.Helper;
 using System.Text;
+using System;
 
 namespace RestoreCalculator.Controllers
 {
@@ -48,11 +49,18 @@ namespace RestoreCalculator.Controllers
             }
 
             var calculatorService = new CalculatorService();
-            var byteArrayList = files.ConvertToByteArrayList();
-
-            var bs = BankStatementReader.ReadFromByteArrayList(byteArrayList, Encoding.GetEncoding(1251));
-            var info = calculatorService.GetInfoFromStatementList(bs);
-            return Ok(info);
+            try
+            {
+                var byteArrayList = files.ConvertToByteArrayList();
+                var bs = BankStatementReader.ReadFromByteArrayList(byteArrayList, Encoding.GetEncoding(1251));
+                var info = calculatorService.GetInfoFromStatementList(bs);
+                return Ok(info);
+            }
+            catch (Exception ex)
+            {
+                //return BadRequest(ex.Message);
+                return StatusCode(409, ex.Message);
+            }
         }        
     }
 } 

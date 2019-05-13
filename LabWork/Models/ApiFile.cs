@@ -9,13 +9,20 @@ namespace RestoreCalculator.Models
 
         public List<byte[]> ConvertToByteArrayList()
         {
-            var bytes = new List<byte[]>();
-            foreach (var content in this.Base64Content)
+            try
             {
-                bytes.Add(Convert.FromBase64String(content));
-            }
+                var bytes = new List<byte[]>();
+                foreach (var content in this.Base64Content)
+                {
+                    bytes.Add(Convert.FromBase64String(content));
+                }
 
-            return bytes;
+                return bytes;
+            }
+            catch (FormatException)
+            {
+                throw new Exception("Ошибка в чтении файла. Проверьте, возможно он пустой.");
+            }
         }
     }
 }

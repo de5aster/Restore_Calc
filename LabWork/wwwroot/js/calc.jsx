@@ -205,6 +205,9 @@ class ContentCalc extends React.Component {
                 if (xhr.status === 400) {
                     this.setErrorMessage(xhr.responseText);
                 }
+                if (xhr.status === 409) {
+                    this.setErrorMessage(xhr.responseText);
+                }
             }
         };
     }
