@@ -58,9 +58,8 @@ namespace RestoreCalculator.Controllers
             }
             catch (Exception ex)
             {
-                //return BadRequest(ex.Message);
                 return StatusCode(409, ex.Message);
             }
-        }        
+        }
     }
-} 
+}

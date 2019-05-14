@@ -344,8 +344,9 @@ class Restore extends React.Component {
 			var restoreDocs = this.calculateInitRestoreDocs(nextProps.statementInfo);
 			var lastMonthDocs = this.calculateInitLastMonthDocs(nextProps.statementInfo);
 			var newMonth = nextProps.statementInfo.datesInStatement.period.monthCount;
+			var newRegion = nextProps.statementInfo.organization.region;
 			this.setState ({
-								region: "",
+								region: newRegion =="00" ? "" : newRegion,
 								taxactionSystem: "",
 								marker: false,
 								visible: false,
