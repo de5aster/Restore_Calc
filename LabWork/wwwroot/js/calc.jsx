@@ -272,7 +272,7 @@ class ContentCalc extends React.Component {
                     <p>Для начала работы нужно загрузить выписку(ки) из Интернет-Банка</p>
                     <form onSubmit={this.onFileSubmit} enctype="multipart/form-data" style={{ marginBottom: "10px" }}>
                         <FormGroup>
-                            <FormControl
+                            <FormControl							    
                                 type="file"
                                 id="file"
                                 name="file"
@@ -282,11 +282,11 @@ class ContentCalc extends React.Component {
                             />
                             <HelpBlock>Выписка должна быть в формате 1С с типом файла .*txt</HelpBlock>
                         </FormGroup>
-                        <Button bsStyle="primary" type="submit" disabled={this.state.filesLength===0}>Загрузить</Button>
+                        <Button variant="outline-dark" type="submit" disabled={this.state.filesLength===0}>Загрузить</Button>
                     </form>
                 </div>
                 <div className={"load" + (this.state.visible ? '_on' : '')} style={{ marginBottom: "10px" }}>
-                    <Button bsStyle="primary" onClick={this.onMoreLoadClick}>Загрузить другие файлы</Button>
+                    <Button variant="outline-dark" onClick={this.onMoreLoadClick}>Загрузить другие файлы</Button>
                 </div>
                 <Restore
                     regions={regions}
@@ -960,7 +960,7 @@ class Documents extends React.Component {
 	}
 
     onEquaringChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = parseInt(this.getValueFromDocsInput(e), 10);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -978,7 +978,7 @@ class Documents extends React.Component {
     }
 	
     onBankComissionChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = parseInt(this.getValueFromDocsInput(e), 10);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -996,7 +996,7 @@ class Documents extends React.Component {
     }
 
     onBuyChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = parseInt(this.getValueFromDocsInput(e), 10);
         this.setState({
             closedDocuments: {
                 buyCount: value,
@@ -1012,8 +1012,9 @@ class Documents extends React.Component {
 		
 		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
     }
+	
     onSellChange = (e) => {
-        let value = this.getValueFromDocsInput(e);
+        let value = parseInt(this.getValueFromDocsInput(e), 10);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -1031,7 +1032,7 @@ class Documents extends React.Component {
     }
 	
 	onTaxChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = parseInt(this.getValueFromDocsInput(e), 10);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -1049,7 +1050,7 @@ class Documents extends React.Component {
 	}
 	
 	onIncomingBankOrderChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = parseInt(this.getValueFromDocsInput(e), 10);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -1067,7 +1068,7 @@ class Documents extends React.Component {
 	}
 	
 	onOutgoingBankOrderChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = parseInt(this.getValueFromDocsInput(e), 10);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -1085,7 +1086,7 @@ class Documents extends React.Component {
 	}
 	
 	onCorpCardPayChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = parseInt(this.getValueFromDocsInput(e), 10);
         this.setState({
             closedDocuments: {
                 buyCount: this.state.closedDocuments.buyCount,
@@ -1105,7 +1106,7 @@ class Documents extends React.Component {
 	
 	onCashboxChange = (e) => 
 	{
-		let value = this.getValueFromDocsInput(e);
+		let value = parseInt(this.getValueFromDocsInput(e), 10);
 		this.setState({
 			cashbox: value
 		});
@@ -1115,7 +1116,7 @@ class Documents extends React.Component {
 	
 	onCashboxCloseDocsChange = (e) => 
 	{
-		let value = this.getValueFromDocsInput(e);
+		let value = parseInt(this.getValueFromDocsInput(e), 10);
 		this.setState({
 			cashboxCloseDoc: value
 		});
@@ -1124,7 +1125,7 @@ class Documents extends React.Component {
 	}
 	
 	onEmployersCloseDocChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = parseInt(this.getValueFromDocsInput(e), 10);
 		this.setState({
 			employersCloseDoc : value
 		});
@@ -1133,7 +1134,7 @@ class Documents extends React.Component {
 	}
 	
 	onEmployersMonthChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = parseInt(this.getValueFromDocsInput(e), 10);
 		this.setState({
 			employersMonth : value
 		});
@@ -1142,7 +1143,7 @@ class Documents extends React.Component {
 	}
 	
 	onBuyCoefficientChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = e.target.valueAsNumber;
 		this.setState({
             coefficients: {
 				buy: value,
@@ -1155,13 +1156,38 @@ class Documents extends React.Component {
 				corpCardPay: this.state.coefficients.corpCardPay,
 				employers: this.state.employers
 			}
-        });
+        });	
+		
+		if(!isNaN(value))
+		{
+			setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+		}
+	}	
+		
+	onBuyCoefficientBlur = (e) => 
+	{
+		if (e.target.value =='')
+		{			
+			this.setState({
+				coefficients: {
+					buy: 0,
+					sell: this.state.coefficients.sell,
+					equaring:this.state.coefficients.equaring,
+					bankComission: this.state.coefficients.bankComission,
+					tax: this.state.coefficients.tax,
+					incomingBankOrder: this.state.coefficients.incomingBankOrder,
+					outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+					corpCardPay: this.state.coefficients.corpCardPay,
+					employers: this.state.employers
+				}
+			});
+		}		
 		
 		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onSellCoefficientChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = e.target.valueAsNumber;
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1176,11 +1202,36 @@ class Documents extends React.Component {
 			}
         });
 		
+		if(!isNaN(value))
+		{
+			setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+		}
+	}
+	
+	onSellCoefficientBlur = (e) => 
+	{
+		if (e.target.value =='')
+		{
+			this.setState({
+            coefficients: {
+				buy: this.state.coefficients.buy,
+				sell: 0,
+				equaring:this.state.coefficients.equaring,
+				bankComission: this.state.coefficients.bankComission,
+				tax: this.state.coefficients.tax,
+				incomingBankOrder: this.state.coefficients.incomingBankOrder,
+				outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+				corpCardPay: this.state.coefficients.corpCardPay,
+				employers: this.state.employers
+				}
+			}); 
+		}
+		
 		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onEquaringCoefficientChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = e.target.valueAsNumber;
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1195,11 +1246,36 @@ class Documents extends React.Component {
 			}
         });
 		
+		if(!isNaN(value))
+		{
+			setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+		}
+	}
+	
+	onEquaringCoefficientBlur = (e) => {
+		if (e.target.value =='')
+		{
+			this.setState({
+				coefficients: {
+					buy: this.state.coefficients.buy,
+					sell: this.state.coefficients.sell,
+					equaring: 0,
+					bankComission: this.state.coefficients.bankComission,
+					tax: this.state.coefficients.tax,
+					incomingBankOrder: this.state.coefficients.incomingBankOrder,
+					outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+					corpCardPay: this.state.coefficients.corpCardPay,
+					employers: this.state.employers
+				}
+			});
+		}
+		
 		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
+	
 	onBankComissionCoefficientChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = e.target.valueAsNumber;
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1214,11 +1290,36 @@ class Documents extends React.Component {
 			}
         });
 		
+		if(!isNaN(value))
+		{
+			setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+		}
+	}
+	
+	onBankComissionCoefficientBlur = (e) => 
+	{
+		if (e.target.value =='')
+		{
+			this.setState({
+				coefficients: {
+					buy: this.state.coefficients.buy,
+					sell: this.state.coefficients.sell,
+					equaring: this.state.coefficients.equaring,
+					bankComission: 0,
+					tax: this.state.coefficients.tax,
+					incomingBankOrder: this.state.coefficients.incomingBankOrder,
+					outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+					corpCardPay: this.state.coefficients.corpCardPay,
+					employers: this.state.employers
+				}
+			});
+		}
+		
 		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
 	onTaxCoefficientChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = e.target.valueAsNumber;
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1233,11 +1334,35 @@ class Documents extends React.Component {
 			}
         });
 		
-		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+		if(!isNaN(value))
+		{
+			setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+		}
+	}
+	
+	onTaxCoefficientBlur = (e) => {
+		if (e.target.value =='')
+		{
+			this.setState({
+				coefficients: {
+					buy: this.state.coefficients.buy,
+					sell: this.state.coefficients.sell,
+					equaring:this.state.coefficients.equaring,
+					bankComission: this.state.coefficients.bankComission,
+					tax: 0,
+					incomingBankOrder: this.state.coefficients.incomingBankOrder,
+					outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+					corpCardPay: this.state.coefficients.corpCardPay,
+					employers: this.state.employers
+				}
+			});
+		}
+		
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);	
 	}
 	
 	onIncomingBankOrderCoefficientChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = e.target.valueAsNumber;
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1252,11 +1377,35 @@ class Documents extends React.Component {
 			}
         });
 		
-		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+		if(!isNaN(value))
+		{
+			setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+		}
+	}
+	
+	onIncomingBankOrderCoefficientBlur = (e) => {
+		if (e.target.value =='')
+		{	
+			this.setState({
+				coefficients: {
+					buy: this.state.coefficients.buy,
+					sell: this.state.coefficients.sell,
+					equaring:this.state.coefficients.equaring,
+					bankComission: this.state.coefficients.bankComission,
+					tax: this.state.coefficients.tax,
+					incomingBankOrder: 0,
+					outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+					corpCardPay: this.state.coefficients.corpCardPay,
+					employers: this.state.employers
+				}
+			});
+		}
+		
+		setTimeout(() => {this.calculateAccountingDocuments()}, 100);	
 	}
 	
 	onOutgoingBankOrderCoefficientChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = e.target.valueAsNumber;
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1270,11 +1419,36 @@ class Documents extends React.Component {
 				employers: this.state.employers
 			}
         });
+				
+		if(!isNaN(value))
+		{
+			setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+		}
+	}
+	
+	onOutgoingBankOrderCoefficientBlur = (e) => {
+		if (e.target.value =='')
+		{	
+			this.setState({
+				coefficients: {
+					buy: this.state.coefficients.buy,
+					sell: this.state.coefficients.sell,
+					equaring:this.state.coefficients.equaring,
+					bankComission: this.state.coefficients.bankComission,
+					tax: this.state.coefficients.tax,
+					incomingBankOrder: this.state.coefficients.incomingBankOrder,
+					outgoingBankOrder:0,
+					corpCardPay: this.state.coefficients.corpCardPay,
+					employers: this.state.employers
+				}
+			});
+		}
 		
 		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
-	}
+	}	
+	
 	onCorpCardPayCoefficientChange = (e) => {
-		let value = this.getValueFromDocsInput(e);
+		let value = e.target.valueAsNumber;
 		this.setState({
             coefficients: {
 				buy: this.state.coefficients.buy,
@@ -1289,6 +1463,29 @@ class Documents extends React.Component {
 			}
         });
 		
+		if(!isNaN(value))
+		{
+			setTimeout(() => {this.calculateAccountingDocuments()}, 100);
+		}
+	}
+	
+	onCorpCardPayCoefficientBlur = (e) => {
+		if (e.target.value =='')
+		{
+			this.setState({
+				coefficients: {
+					buy: this.state.coefficients.buy,
+					sell: this.state.coefficients.sell,
+					equaring:this.state.coefficients.equaring,
+					bankComission: this.state.coefficients.bankComission,
+					tax: this.state.coefficients.tax,
+					incomingBankOrder: this.state.coefficients.incomingBankOrder,
+					outgoingBankOrder:this.state.coefficients.outgoingBankOrder,
+					corpCardPay : 0,
+					employers: this.state.employers
+				}
+			});
+		}
 		setTimeout(() => {this.calculateAccountingDocuments()}, 100);
 	}
 	
@@ -1346,7 +1543,7 @@ class Documents extends React.Component {
 	getValueFromDocsInput = (e) => {
 		if (e.target.value !=='')
 		{
-			return parseInt(e.target.value, 10);
+			return e.target.valueAsNumber;
 		}
 		
 		return 0;
@@ -1381,56 +1578,56 @@ class Documents extends React.Component {
                                     <td className="row-name">Покупки</td>
                                     <td> (&nbsp;&nbsp;{this.state.documents.buyCount}&nbsp;&nbsp;&nbsp;+</td>
                                     <td><input className="input-table" type="number" value={this.state.closedDocuments.buyCount} onChange={this.onBuyChange}></input>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
-									<td className="td-equival"><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.buy} onChange= {this.onBuyCoefficientChange}/>&nbsp;&nbsp;= </td>
+									<td><input className="input-table" type="number" value={this.state.coefficients.buy} onChange= {this.onBuyCoefficientChange} onBlur= {this.onBuyCoefficientBlur}/>&nbsp;&nbsp;= </td>
                                     <td>{this.state.accountingDocuments.buy}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Продажи</td>
                                     <td>(&nbsp;&nbsp;{this.state.documents.sellCount}&nbsp;&nbsp;&nbsp;+</td>
                                     <td><input className="input-table" type="number" value={this.state.closedDocuments.sellCount} onChange={this.onSellChange}></input>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.sell} onChange={this.onSellCoefficientChange}/>&nbsp;&nbsp;=</td>
+									<td><input className="input-table" type="number" value={this.state.coefficients.sell} onChange={this.onSellCoefficientChange} onBlur={this.onSellCoefficientBlur}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.sell}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Эквайринг</td>
                                     <td>(&nbsp;&nbsp;{this.state.documents.equaringCount}&nbsp;&nbsp;&nbsp;+</td>
                                     <td><input className="input-table" type="number" value={this.state.closedDocuments.equaringCount} onChange={this.onEquaringChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.equaring} onChange={this.onEquaringCoefficientChange}/>&nbsp;&nbsp;=</td>
+									<td><input className="input-table" type="number" value={this.state.coefficients.equaring} onChange={this.onEquaringCoefficientChange} onBlur={this.onEquaringCoefficientBlur}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.equaring}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name">Комиссия банка</td>
                                     <td>(&nbsp;&nbsp;{this.state.documents.bankComissionCount}&nbsp;&nbsp;&nbsp;+</td>
                                     <td><input className="input-table" type="number" value={this.state.closedDocuments.bankComissionCount} onChange={this.onBankComissionChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
-									<td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.bankComission} onChange={this.onBankComissionCoefficientChange}/>&nbsp;&nbsp;=</td>
+									<td><input className="input-table" type="number" value={this.state.coefficients.bankComission} onChange={this.onBankComissionCoefficientChange} onBlur={this.onBankComissionCoefficientBlur}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.bankComission}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Налоговые платежи</p></td>
                                     <td>(&nbsp;&nbsp;{this.state.documents.taxCount}&nbsp;&nbsp;&nbsp;+</td>
 									<td><input className="input-table" type="number" value={this.state.closedDocuments.taxCount} onChange={this.onTaxChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.tax} onChange={this.onTaxCoefficientChange}/>&nbsp;&nbsp;=</td>
+                                    <td><input className="input-table" type="number" value={this.state.coefficients.tax} onChange={this.onTaxCoefficientChange} onBlur={this.onTaxCoefficientBlur}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.tax}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Входящий <br/>банк.ордер</p></td>
                                     <td>(&nbsp;&nbsp;{this.state.documents.incomingBankOrder}&nbsp;&nbsp;&nbsp;+</td>
 									<td><input className="input-table" type="number" value={this.state.closedDocuments.incomingBankOrder} onChange={this.onIncomingBankOrderChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.incomingBankOrder} onChange={this.onIncomingBankOrderCoefficientChange}/>&nbsp;&nbsp;=</td>
+                                    <td><input className="input-table" type="number" value={this.state.coefficients.incomingBankOrder} onChange={this.onIncomingBankOrderCoefficientChange} onBlur={this.onIncomingBankOrderCoefficientBlur}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.incomingBankOrder}</td>
                                 </tr>
                                 <tr>
                                     <td className="row-name"><p>Исходящий <br />банк.ордер</p></td>
                                     <td>(&nbsp;&nbsp;{this.state.documents.outgoingBankOrder}&nbsp;&nbsp;&nbsp;+</td>
 									<td><input className="input-table" type="number" value={this.state.closedDocuments.outgoingBankOrder} onChange={this.onOutgoingBankOrderChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.outgoingBankOrder} onChange={this.onOutgoingBankOrderCoefficientChange}/>&nbsp;&nbsp;=</td>
+                                    <td><input className="input-table" type="number" value={this.state.coefficients.outgoingBankOrder} onChange={this.onOutgoingBankOrderCoefficientChange} onBlur={this.onOutgoingBankOrderCoefficientBlur}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.outgoingBankOrder}</td>
                                 </tr>
 								<tr>
                                     <td className="row-name"><p>Оплата <br />по корп.карте</p></td>
                                     <td>(&nbsp;&nbsp;{this.state.documents.corpCardPay}&nbsp;&nbsp;&nbsp;+</td>
 									<td><input className="input-table" type="number" value={this.state.closedDocuments.corpCardPay} onChange={this.onCorpCardPayChange}/>&nbsp;&nbsp;)&nbsp;&nbsp;*</td>
-                                    <td><input className="input-table" type="number" min="0" max="100" step="0.01" value={this.state.coefficients.corpCardPay} onChange={this.onCorpCardPayCoefficientChange}/>&nbsp;&nbsp;=</td>
+                                    <td><input className="input-table" type="number" value={this.state.coefficients.corpCardPay} onChange={this.onCorpCardPayCoefficientChange} onBlur={this.onCorpCardPayCoefficientBlur}/>&nbsp;&nbsp;=</td>
                                     <td>{this.state.accountingDocuments.corpCardPay}</td>
                                 </tr>
 								<tr>
@@ -1468,8 +1665,10 @@ class Documents extends React.Component {
                 </Panel>
             </div>
         );
-    }
+    
+	}	
 }
+
 
 class TopFive extends React.Component {
 	constructor(props) {
