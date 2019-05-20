@@ -59,7 +59,7 @@ namespace RestoreCalculator.Controllers
             }
             catch (Exception ex)
             {
-                logService.WriteException($"ERROR - {ex.StackTrace}");
+                logService.WriteException($"ERROR - \n{ex.Message} - \n{ex.StackTrace}");
                 return StatusCode(409, ex.Message);
             }
         }
