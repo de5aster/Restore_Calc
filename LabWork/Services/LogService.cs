@@ -31,6 +31,32 @@ namespace RestoreCalculator.Services
             WriteToFile(log, exceptionPath);
         }
 
+        public byte[] GetFile(string option)
+        {
+            var path = GetPath(option);
+            if (path == "")
+            {
+                return null;
+            }
+
+            return ReadFromFile(path);
+        }
+
+        private string GetPath(string option)
+        {
+            switch (option)
+            {
+                case "log":
+                    return this.logPath;
+                case "exception":
+                    return this.exceptionPath;
+                default:
+                    break;
+            }
+
+            return "";
+        }
+
         private static void WriteToFile(Log log, string path)
         {
             if (!File.Exists(path))
@@ -49,6 +75,18 @@ namespace RestoreCalculator.Services
             }
         }
 
+        private static byte[] ReadFromFile(string path)
+        {
+            byte[] bytes;
+            if (!File.Exists(path))
+                return null;
+            using (var sr = new StreamReader(path))
+            {
+                bytes = Encoding.Default.GetBytes(sr.ReadToEnd());
+            }
+
+            return bytes;
+        }
 
     }
 }

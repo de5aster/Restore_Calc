@@ -13,8 +13,7 @@ namespace RestoreCalculator.Controllers
     public class CalcController : Controller
     {
         private readonly CalculatorServiceOld calcService = new CalculatorServiceOld();
-        private readonly List<string> fileLines = new List<string>();
-        private LogService logService = new LogService();
+        private readonly LogService logService = new LogService();
         
         [HttpPost]
         [Route ("restore")]
@@ -60,9 +59,22 @@ namespace RestoreCalculator.Controllers
             }
             catch (Exception ex)
             {
-                logService.WriteException($"ERROR  - {ex.StackTrace}");
+                logService.WriteException($"ERROR - {ex.StackTrace}");
                 return StatusCode(409, ex.Message);
             }
         }
+
+        [HttpGet]
+        [Route("log/{option}")]
+        public IActionResult GetLogFile(string option)
+        {
+            var bytes = logService.GetFile(option);
+            if (bytes == null)
+            {
+                return BadRequest();
+            }
+            return this.File(bytes, "text/plain", $"{option}_{DateTime.Now}.txt");
+        }
+
     }
 }

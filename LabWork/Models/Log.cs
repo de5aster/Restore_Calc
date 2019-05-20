@@ -16,7 +16,7 @@ namespace RestoreCalculator.Models
 
         public override string ToString()
         {
-            return $"{Date.ToString()} - {Action}";
+            return $"{Date} GMT+5 - {Action}";
         }
     }
 }
