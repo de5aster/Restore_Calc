@@ -665,6 +665,10 @@ class Restore extends React.Component {
 		}
 		return inn + "-" + kpp;
 	}
+	
+	moneyFormat = (n) => {
+		return String(n).replace(/(\d)(?=(\d{3})+([^\d]|$))/g, '$1 ');
+	}
 
     render() { 
         let validation = this.isValid();
@@ -752,7 +756,7 @@ class Restore extends React.Component {
 									<Panel.Title componentClass="h3" style={{ fontSize: "24px" }}>Стоимость восстановления</Panel.Title>
 								</Panel.Heading>
 								<Panel.Body>
-									<span > {parseInt(this.state.restorePrice, 10)} рублей </span>
+									<span > {this.moneyFormat(parseInt(this.state.restorePrice, 10))} рублей </span>
 								</Panel.Body>
 							</Panel>
 							<Panel className={"summary" + (this.state.visible ? '_none' : '')} style={{ width: '24rem' }}>
@@ -760,7 +764,7 @@ class Restore extends React.Component {
 									<Panel.Title componentClass="h3" style={{ fontSize: "24px" }}>Стоимость обслуживания</Panel.Title>
 								</Panel.Heading>
 								<Panel.Body>
-									<span > {parseInt(this.state.currentPrice, 10)} рублей </span>
+									<span > {this.moneyFormat(parseInt(this.state.currentPrice, 10))} рублей </span>
 								</Panel.Body>
 							</Panel>							
 						</div>
@@ -788,10 +792,10 @@ class Restore extends React.Component {
 				<div>					
 						<Nav bsStyle="tabs" activeKey={this.state.activeNav} onSelect = {this.navItemSelect}>
 							<NavItem eventKey="1" onClick = {this.onShowRestore}> 
-							 За всё время							
+							 Восстановление							
 							</NavItem>	
 							<NavItem eventKey="2" onClick = {this.onShowLastMonth}>
-							 Последний месяц
+							 Текущее обслуживание
 							</NavItem>
 						</Nav>
 						<Documents
@@ -1570,7 +1574,7 @@ class Documents extends React.Component {
                                     <th>Операций в&nbsp;банковской выписке </th>
                                     <th>Закрывающих документов </th>									
 									<th>Коэффициент</th>
-                                    <th>Бухгалтерских операций в&nbsp;расчете</th>
+                                    <th>Бух. операций в&nbsp;расчете</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1647,7 +1651,7 @@ class Documents extends React.Component {
                                     <td className="row-name"><p>Сотрудники</p></td>
 									<td>{this.state.employers} сотр.</td>	
 									<td><input className="input-table" type="number" value={this.state.employersCloseDoc} onChange={this.onEmployersCloseDocChange}/>&nbsp;&nbsp;*</td>									
-									<td><input className="input-table" type="number" value={this.state.employersMonth} onChange={this.onEmployersMonthChange}/>&nbsp;&nbsp;=</td>
+									<td><input className="input-table" type="number" style={{width: "37px"}}value={this.state.employersMonth} onChange={this.onEmployersMonthChange}/>&nbsp;мес.&nbsp;&nbsp;=</td>
 									
                                     <td>{this.state.accountingDocuments.employers}</td>
                                 </tr>
@@ -1677,6 +1681,10 @@ class TopFive extends React.Component {
         };		
     }
 	
+	moneyFormat = (n) => {
+		return parseFloat(n).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1 ").replace('.', ',');
+	}
+	
 	render() {
         return (
 		<div className={"docs" + (this.props.visible ? '_none' : '')}>
@@ -1702,7 +1710,7 @@ class TopFive extends React.Component {
 									<tr>							
 										<td style = {{textAlign: "left"}}>{item.name.slice(0,50)}</td>
 										<td style = {{width: "100px"}}>{item.inn}</td>
-										<td style = {{width: "120px"}}>{item.value}</td>
+										<td style = {{width: "120px"}}> {this.moneyFormat(item.value)}</td>
 									</tr>
 									)
 								}

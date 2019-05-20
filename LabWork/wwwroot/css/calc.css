@@ -142,10 +142,13 @@ min-width: 150px;
     max-width: 75px;
     margin-left: 5px;
 }
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
     -webkit-appearance: none;
-    margin: 0;
 }
 
 .input-table {   
