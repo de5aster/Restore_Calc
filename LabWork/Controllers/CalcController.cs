@@ -14,6 +14,7 @@ namespace RestoreCalculator.Controllers
     {
         private readonly CalculatorServiceOld calcService = new CalculatorServiceOld();
         private readonly List<string> fileLines = new List<string>();
+        private LogService logService = new LogService();
         
         [HttpPost]
         [Route ("restore")]
@@ -54,10 +55,12 @@ namespace RestoreCalculator.Controllers
                 var byteArrayList = files.ConvertToByteArrayList();
                 var bs = BankStatementReader.ReadFromByteArrayList(byteArrayList, Encoding.GetEncoding(1251));
                 var info = calculatorService.GetInfoFromStatementList(bs);
+                logService.WriteAction("Выписка успешно обработана");
                 return Ok(info);
             }
             catch (Exception ex)
             {
+                logService.WriteException($"ERROR  - {ex.StackTrace}");
                 return StatusCode(409, ex.Message);
             }
         }
